@@ -44,11 +44,17 @@ a#link {
 }
 
 /*when the link is just sitting there*/
-a:link {
+a:link#link {
 	background: #FFFFFF;
+	color: black;
 }
 
 /*mousing over the link*/
-a:hover {
+a:hover#link {
 	background: #AFEEEE;
+}
+
+a:visited#link {
+
+	color: black;
 }

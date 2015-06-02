@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ page.title }} - Adam Cordingley</title>
 	<base href="{{ site.url }}">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta charset="UTF-8">
+	<title>{{ page.title }} - Adam Cordingley</title>
 	<link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
 	<link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
@@ -23,12 +25,23 @@
 	
 </head>
 <body>
-	<div>
-		<h1>{{ page.title }}</h1>
-	</div>
+	<div id="backdrop" class="center">
+		<img src="img/web_header.png">
+		<div id="nav" >
+			<span><a href="index.html" id="link">Home</a></span>
+			<span><a href="about.html" id="link">About</a></span>
+			<span><a href="contact.html" id="link">Contact Adam</a></span>
+			<span><a href="AdamCordingleyCV.pdf" id="link" target="_blank">CV/Resume</a></span>
+		</div>
+		<div id="content">
+			<h1>{{ page.title }}</h1>
+		
+			{{ content }}
+		</div>
+		<div id="footer">
+			<p>&copy; 2015 Adam Cordingley</p>
+		</div>
 
-	<div>
-		{{ content }}
 	</div>
 
 </body>

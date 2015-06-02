@@ -1,0 +1,47 @@
+
+.center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+body {
+	/*background: blue;*/
+	width: 100%;
+	text-align: center;
+}
+
+div#backdrop {
+	width: 50%;
+	padding: 10px;
+	border-radius: 10px;
+	background: #D3D3D3 ;
+	margin-top: 10px;
+}
+
+div#nav {
+	margin: 10px;
+	padding: 15px;
+	background: #ffffff;
+	border-radius: 5px;
+}
+
+div#content {
+	min-height: 500px;
+	text-align: center;
+}
+
+img {
+	border-radius: 5px;
+}
+
+a#link {
+	text-decoration: none;
+	font-family: Verdana ,sans-serif;
+	border-radius: 6px;
+	background: #AFEEEE;
+	padding: 10px;
+	margin: 5px;
+}
+
+a:link {
+}

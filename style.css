@@ -38,10 +38,17 @@ a#link {
 	text-decoration: none;
 	font-family: Verdana ,sans-serif;
 	border-radius: 6px;
-	background: #AFEEEE;
+	/*background: #AFEEEE;*/
 	padding: 10px;
 	margin: 5px;
 }
 
+/*when the link is just sitting there*/
 a:link {
+	background: #FFFFFF;
+}
+
+/*mousing over the link*/
+a:hover {
+	background: #AFEEEE;
 }

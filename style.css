@@ -26,6 +26,7 @@ div#nav {
 }
 
 div#content {
+	width:80%;
 	min-height: 500px;
 	text-align: center;
 }
@@ -58,3 +59,7 @@ a:visited#link {
 
 	color: black;
 }
+
+/*p{
+	max-
+}*/

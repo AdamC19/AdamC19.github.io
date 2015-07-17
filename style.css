@@ -8,6 +8,7 @@ body {
 	/*background: blue;*/
 	width: 100%;
 	text-align: center;
+
 }
 
 div#backdrop {
@@ -18,18 +19,36 @@ div#backdrop {
 	margin-top: 10px;
 }
 
+h1#header{
+	font-size: 2.5em;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+h1{
+	font-family: Arial, Helvetica, sans-serif;
+}
+
 div#nav {
 	margin: 10px;
 	padding: 15px;
 	background: #ffffff;
 	border-radius: 5px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+
 }
 
 div#content {
 	width:80%;
 	min-height: 500px;
 	text-align: center;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	/*font-family: monospace;*/
 }
+
+#left-align {
+	text-align: left;
+}
+
 
 img {
 	border-radius: 5px;

@@ -6,8 +6,8 @@ FN:Adam Cordingley
 ORG:Case Western Reserve Univ.
 TITLE:Student
 
-TEL;TYPE=mobile,voice;VALUE=uri:tel:+1-304-638-9199
-ADR;TYPE=home;LABEL="128 Shockey Drive\nHuntington, WV 25701\nUnited States of America";PREF=1:;;128 Shockey Drive;Huntington;WV;25701;United States of America
+TEL;TYPE=mobile:(304) 638-9199
+ADR;TYPE=home:;;128 Shockey Drive;Huntington;WV;25701;United States of America
 EMAIL:adam.cordingley@case.edu
 URL:http://acordingley.us
 SOURCE:http://acordingley.us/Adam_Cord.vcf

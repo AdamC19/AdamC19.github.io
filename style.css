@@ -8,8 +8,9 @@ body {
 	/*background: blue;*/
 	width: 100%;
 	text-align: center;
-
+	margin:0;
 }
+
 
 div#backdrop {
 	width: 60%;
@@ -49,6 +50,9 @@ div#content {
 	text-align: left;
 }
 
+#right-align{
+	text-align: right;
+}
 
 img {
 	border-radius: 5px;

@@ -49,6 +49,9 @@ div#content {
 	text-align: left;
 }
 
+#right-align{
+	text-align: right;
+}
 
 img {
 	border-radius: 5px;

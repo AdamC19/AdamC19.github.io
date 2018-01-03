@@ -57,6 +57,11 @@ img {
 	border-radius: 5px;
 }
 
+ul {
+	text-align 	: right;
+	margin 		: 10px auto;
+}
+
 /*regular links*/
 a:link{
 	text-decoration: none;

@@ -90,17 +90,17 @@ a:visited#link {
 
 ul {
 	list-style-type : none;
-	font-size 		: 1.05em;
+	font-size 		: 1.1em;
 	text-align 		: left;
 	width 			: 200px;
 	margin 			: 0px auto;
 }
 
 ul > ul {
-	font-size 		: 0.95em;
+	font-size 		: 0.9em;
 }
 
-ul > a{
+li > a{
 	color: black;
 }
 

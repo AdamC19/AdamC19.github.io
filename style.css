@@ -57,11 +57,6 @@ img {
 	border-radius: 5px;
 }
 
-ul {
-	text-align 	: right;
-	margin 		: 10px auto;
-}
-
 /*regular links*/
 a:link{
 	text-decoration: none;
@@ -91,6 +86,24 @@ a:visited#link {
 
 	color: black;
 }
+
+
+ul {
+	list-style-type : none;
+	font-size 		: 1.05em;
+	text-align 		: right;
+	width 			: 200px;
+	margin 			: 10px auto;
+}
+
+ul > ul {
+	font-size 		: 0.95em;
+}
+
+ul > a{
+	color: black;
+}
+
 
 /*p{
 	max-

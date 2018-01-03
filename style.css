@@ -91,9 +91,9 @@ a:visited#link {
 ul {
 	list-style-type : none;
 	font-size 		: 1.05em;
-	text-align 		: right;
+	text-align 		: left;
 	width 			: 200px;
-	margin 			: 10px auto;
+	margin 			: 0px auto;
 }
 
 ul > ul {

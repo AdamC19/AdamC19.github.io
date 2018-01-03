@@ -30,10 +30,11 @@ h1{
 }
 
 div#nav {
-	margin: 10px;
-	background: #ffffff;
-	border-radius: 5px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	/*margin 			: 10px;*/
+	width 			: 80%;
+	background 		: #ffffff;
+	border-radius 	: 5px;
+	font-family 	: Verdana, Arial, Helvetica, sans-serif;
 	
 }
 

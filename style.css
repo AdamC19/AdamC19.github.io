@@ -67,7 +67,7 @@ a#link {
 	font-family: 		Verdana ,sans-serif;
 	border-radius: 		6px;
 	padding: 			10px;
-	margin: 			5px;
+	margin:				5px auto;
 	display: 			inline-block;
 }
 

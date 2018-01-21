@@ -4,6 +4,18 @@
 	margin-right: auto;
 }
 
+.center-all{
+	margin-left 	: auto;
+	margin-right 	: auto;
+	text-align 	: center;
+	width 		: 100%;
+}
+
+.center-about{
+	width 		: 70%;
+	text-align 	: center;
+}
+
 body {
 	/*background: blue;*/
 	width: 100%;
@@ -26,23 +38,24 @@ h1#header{
 }
 
 h1{
-	font-family: Arial, Helvetica, sans-serif;
+	font-family 	: Arial, Helvetica, sans-serif;
+	display 	: inline-block;
 }
 
 div#nav {
-	margin 			: 10px auto;
-	width 			: 80%;
-	background 		: #ffffff;
+	margin 		: 10px auto;
+	width 		: 80%;
+	background 	: #ffffff;
 	border-radius 	: 5px;
 	font-family 	: Verdana, Arial, Helvetica, sans-serif;
 	
 }
 
 div#content {
-	width:80%;
-	min-height: 500px;
-	text-align: center;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	width 		: 80%;
+	min-height 	: 500px;
+	text-align 	: left;
+	font-family 	: Verdana, Arial, Helvetica, sans-serif;
 }
 
 #left-align {
@@ -89,11 +102,15 @@ a:visited#link {
 
 
 ul.quicklinks {
-	list-style-type : none;
+	display 		: inline-block;
+	list-style-type 	: none;
 	font-size 		: 1.1em;
 	text-align 		: left;
-	width 			: 200px;
-	margin 			: 0px auto;
+	max-width 		: 21%;
+	margin 			: 0px 2% 0px 0px;
+	padding 		: 2%;
+	border-radius 		: 5px;
+	background 		: aliceblue;
 }
 
 ul.quicklinks > ul {

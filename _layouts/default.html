@@ -39,16 +39,17 @@
 	<div id="backdrop" class="center">
 		<!--<img src="img/web_header.png">-->
 		<h1 id="header">Adam Cordingley</h1>
-		<div id="nav" >
+		{{ site.default-nav }}
+<!--		<div id="nav" >
 			<a href="index.html"    id="link">Home</a>
 			<a href="cwru.html"     id="link">CWRU</a>
 			<a href="research.html" id="link">Marshall</a>
 			<a href="about.html"    id="link">About</a>
 			<a href="contact.html"  id="link">Contact</a>
 			
-		</div>
+		</div> -->
 		<div id="content" class="center">
-			<h1>{{ page.title }}</h1>
+			<h1 class="center-all">{{ page.title }}</h1>
 		
 			{{ content }}
 		</div>

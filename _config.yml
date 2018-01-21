@@ -18,3 +18,15 @@ plugins:
 
 whitelist:
   - jekyll-redirect-from
+
+# HTML Snippets
+default-nav: "
+<div id=\"nav\" > 
+  <a href=\"index.html\" id=\"link\">Home</a> 
+  <!--<a href=\"cwru.html\"     id=\"link\">CWRU</a> 
+  <a href=\"research.html\" id=\"link\">Marshall</a>--> 
+  <a href=\"about.html\"    id=\"link\">About</a> 
+  <a href=\"contact.html\"  id=\"link\">Contact</a> 
+</div>"
+
+

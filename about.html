@@ -11,21 +11,20 @@ redirect_from:
 		<li><a href="about.html#cwru">CWRU</a></li>
 		<li><a href="about.html#marshall">Marshall</a></li>
 	</ul>
-
+	<li><a href="{{page.url}}#projects">Projects and Interests</a>
 	<li><a href="about.html#resume">Resume</a></li>
 	<li><a href="about.html#site">About This Site</a></li>
 </ul>
 
 <div class="center-about">
-	<h1 class="center-all">{{ page.title }}</h1>
+	<h1 id="top" class="center-all">{{ page.title }}</h1>
 
 	<p class="center-all">I&rsquo;m a sophomore at Case Western Reserve University in Cleveland, OH, planning to major in Electrical Engineering, and am interested in robotics as a career. I&rsquo;m currently a member of <a href="http://cwrubotix.case.edu" target="_blank">CWRUBotix</a>, the Case Western Robotics Team, and an intermittent member of the Case Western &quot;<a href="http://hacsoc.org" target="_blank">Hacker Society</a>&quot;. Prior to this, I was involved in VEX competitive robotics from 2012 - 2016 and am cofounder of <a href="http://backdrive.github.io/" target="_blank">VRC Team 8768A</a>. I also enjoy things like messing with electronics, recreational computer programming, hardware hacking, woodworking, playing the clarinet, and tropical fish keeping.</p>
 
 </div>
-
 <hr />
 
-
+<!--CWRU-->
 <h2 id="cwru" class="center-all">CWRU</h2>
 <p>
 I&apos;m a sophomore at <a href="http://case.edu" target="_blank">Case Western Reserve University</a> studying Elecrical Engineering.
@@ -51,8 +50,9 @@ I&apos;m a sophomore at <a href="http://case.edu" target="_blank">Case Western R
 	<p >Since the Fall of 2016, I work part time for the Case School of Engineering Web Support &quot;dev ops integration&quot; team. My primary task is assisting with and training users in using the Drupal content management system. We&apos;re in the middle of a switch to a newer version of Drupal and as a result I&apos;ve also been tasked with self-teaching myself the new version then writing usage documentation for faculty and staff. I&apos;ve also gotten some contact with the LAMP stack webserver.</p>
 </div>
 
-
 <hr />
+
+<!--MARSHALL-->
 <h2 id="marshall" class="center-all">Marshall</h2>
 <p>I have been involved in several research projects at <a href="http://www.marshall.edu" target="_blank">Marshall University</a> (MU). Information pertinent to those projects can be found on this page.</p>
 
@@ -83,11 +83,22 @@ I&apos;m a sophomore at <a href="http://case.edu" target="_blank">Case Western R
 </div>
 
 <hr />
+
+<!--PROJECTS SECTION-->
+<h2 id="projects" class="center-all">Projects and Interests</h2>
+<div id="tiles-container">
+	{% include post-tile.html %} 
+</div>
+<hr />
+
+<!--RESUME-->
 <h2 id="resume" class="center-all">Resume</h2>
 <p class="center-all"><a href="Adam_Cordingley_resume.pdf">Download Resume</a>&nbsp;</p>
 <object width="100%" height="500px" data="Adam_Cordingley_resume.pdf"></object>
 
 <hr />
+
+<!-- ABOUT THIS SITE-->
 <h2 id="site" class="center-all">This Site</h2>
 <p class="center-all">This site is hosted using <a href="http://pages.github.com/" target="_blank">GitHub pages</a>. The repository for this site can be found <a href="https://github.com/AdamC19/AdamC19.github.io" target="_blank">here</a>.</p>
 <a style="float:top" class="github-button" href="https://github.com/AdamC19" data-style="mega" data-count-href="/AdamC19/followers" data-count-api="/users/AdamC19#followers" data-count-aria-label="# followers on GitHub" aria-label="Follow @AdamC19 on GitHub">Follow @AdamC19</a>

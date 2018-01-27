@@ -11,11 +11,6 @@
 	width 		: 100%;
 }
 
-.center-about{
-	width 		: 70%;
-	text-align 	: center;
-	display 	: inline-block;
-}
 
 body {
 	/*background: blue;*/
@@ -26,11 +21,11 @@ body {
 
 
 div#backdrop {
-	width: 75%;
-	padding: 10px;
-	border-radius: 10px;
-	background: #D3D3D3 ;
-	margin-top: 10px;
+	width 		: 75%;
+	padding 	: 10px;
+	border-radius 	: 10px;
+	background 	: #D3D3D3 ;
+	margin-top 	: 10px;
 }
 
 h1#header{
@@ -103,30 +98,76 @@ a:visited#link {
 	color: black;
 }
 
+.center-about{
+	width 		: 70%;
+	text-align 	: center;
+	display 	: inline-block;
+}
 
 ul.quicklinks {
 	display 		: inline-block;
 	list-style-type 	: none;
-	font-size 		: 1.1em;
+	font-size 		: 1.0em;
 	text-align 		: left;
-	max-width 		: 21%;
+	max-width 		: 22%;
 	margin 			: 20px 2% 0px 0px;
 	padding 		: 2%;
 	border-radius 		: 5px;
 	background 		: aliceblue;
 	vertical-align 		: top;
+	line-height 		: 1.4em;
 }
 
 ul.quicklinks > ul {
 	list-style-type : none;
-	font-size 		: 0.9em;
+	font-size 	: 0.9em;
 }
 
 ul.quicklinks > li > a, ul.quicklinks > ul > li > a{
 	color: black;
 }
 
+#tiles-container{
+	width 		: 80%;
+	margin 		: 0px auto;	
+}
 
-/*p{
-	max-
+#tile{
+	display 	: inline-block;
+	margin 		: 1.5em 2% 0px 2%;
+	width 		: 45%;
+}
+#tile > img{
+	margin 		: 0px 0px 0px 0px;
+	width 		: 100%;
+}
+#tile > span {
+	display 	: block;
+	width 		: 94%;
+	margin 		: 0.2em auto;
+	text-align 	: center;
+} 
+#tile:hover{
+	color 		: #444444;
+}
+
+span#post-title{
+	/*font : style weight  font-size/line-spacing  font-family ,  generic-family ;  */
+	font 		: normal bold 1.2em Verdana, sans-serif;
+}
+
+a#tile-link{
+	width 		: 100%;
+	margin 		: 0;
+	border-radius 	: 5px;
+}
+a:link#tile-link{
+	color 		: black;
+	text-decoration : none;	
+}
+a:visited#tile-link{
+	color 		: black;
+}
+/*a:hover#tile-link{
+	border-color 	: black; 
 }*/

@@ -171,3 +171,10 @@ a:visited#tile-link{
 /*a:hover#tile-link{
 	border-color 	: black; 
 }*/
+
+#toggle-btn{
+	width 		: 100%;
+	border 		: 0px;
+	background-color: #D3D3D3;
+	text-align 	: center; 
+}

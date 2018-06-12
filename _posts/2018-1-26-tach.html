@@ -5,11 +5,15 @@ subhead: How I made a digital engine tachometer for my vehicle.
 imgurl: /img/tach-square.png
 ---
 <h2 class="center-all">Overview</h2>
-<p>I own a 2000 Chevy S10 with an automatic transmission. In order to, I assume, cut production cost, the stock version did not come with an engine tachometer. Being an automatic, it not needed, and so, it doesn't have one. This gave me an excuse to attempt to build my own. <br>
+<p>I own a 2000 Chevy S10 with an automatic transmission. In order to, I assume, cut production cost, the stock version did not come with an engine tachometer. Although it's not strictly needed, being an automatic, this gave me an excuse to attempt to build my own. <br>
 I wanted it to be a challenge, however, so I decided to do it without using a microcontroller (for example, an Arduino). 
 </p>
-
-<h2>Schematics</h2>
+<h2 class="center-all">Theory of Operation</h2>
+<p>My setup imagines an encoder on the engine flywheel that would produce 1 or more square waves per revolution. These pulses would be counted by several binary counters. There would also be a real time clock (RTC) that would reset the whole thing at a regular period. <br>
+The potential challenge of such a setup is that it seems that it needs some way to calculate Revolutions-Per-Minute from the binary counts it's receiving. Naturally, this would be trivial with a microcontroller. What I decided to do was contrive the setup so that each binary counter would store a single decimal number. They would be externally programmed, with logic gates, to clear when they reach 10 and carry out to the next counter. I could also control two other variables: the "counts-per-revolution" and the clock period. With a clock period of 0.25 seconds and a counts-per-revolution of 24, the number of counts received in that interval will equal RPM/10. this meant that I could acheive +/- 10 RPM of accuracy without doing complex calculations. The numbers from the counters would simply be fed into registers, then the registers to 7-segment display decoders. I drew up some schematics, picked some components, and soon had my first design. </p>
+<h2 class="center-all">First Design</h2>
+<p> This design suffers an unfortunate flaw. It was caused by me not reading the binary counter documentation closely enough. It has to do with the function of each counter clearing itself when it reaches 10. It detects this case with an AND gate on the QB and QD outputs. It produces a rising edge to clock the next counter. It also goes through an inverter to produce an inverted logic signal to for the CLR function. <br>
+However, the RTC clock must ALSO be able to clear ALL the counters. To solve this conflict, instead of adding a logic gate to the CLR input (I opted for this later), I chose to use CLR for the RTC-clear, and use the LOAD input for the self-clearing function (intending for it to load 0000). If I had read the documentation more carfully, I would have learned that the LOAD function does not affect the outputs until the next CLK cycle! Meaning that every 10 clock cycles the counter sees, it misses 1! Thus, in each stage, we have a loss rate of 1/11. I learned all this after I soldered it up and debugged it with an oscilloscope. The lesson is: read the documentation.</p>
 <div style="display:table;width:100%;margin:0px">
 	<img src="/img/tach/tach_counter_full.svg" style="display:block;width:100%" alt="Main tachometer circuit schematic">
 	<p style="display:inline-block;width:100%;font-size:0.75em">
@@ -25,4 +29,6 @@ I wanted it to be a challenge, however, so I decided to do it without using a mi
 	<p style="display:inline-block;width:100%;font-size:0.75em">
 	Schematic of the 0.25 second real-time-clock built using a 555 timer.</p>
 </div>
+
+<h2> Second Iteration (Fix) </h2>
 

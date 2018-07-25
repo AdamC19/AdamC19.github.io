@@ -1,0 +1,163 @@
+\documentclass[a4paper,10pt]{article}
+%compile with XeLaTeX
+%A Few Useful Packages
+\usepackage{marvosym}
+\usepackage{fontspec} 					%for loading fonts
+\usepackage{xunicode,xltxtra,url,parskip} 	%other packages for formatting
+\RequirePackage{color,graphicx}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[big]{layaureo} 				%better formatting of the A4 page
+% an alternative to Layaureo can be ** \usepackage{fullpage} **
+\usepackage{supertabular} 				%for Grades
+\usepackage{titlesec}					%custom \section
+\usepackage{color}						%for colors
+\usepackage{blindtext}
+\usepackage{textcomp} 					%better looking registered trademark glyph
+
+%Setup hyperref package, and colours for links
+\usepackage{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour, linkcolor=linkcolour}
+
+%FONTS
+\defaultfontfeatures{Mapping=tex-text}
+%\setmainfont[SmallCapsFont = Fontin SmallCaps]{Fontin}
+%%% modified for Karol Kozioł for ShareLaTeX use
+\setmainfont[
+SmallCapsFont = trebuc.ttf,
+BoldFont = trebucbd.ttf,
+ItalicFont = trebucit.ttf
+]
+{trebuc.ttf}
+%%%
+
+%CV Sections inspired by: 
+%http://stefano.italians.nl/archives/26
+\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{3pt}{3pt}
+%Tweak a bit the top margin
+%\addtolength{\voffset}{-1.3cm}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+% total={170mm,257mm},
+ left=15mm,
+ right=15mm,
+ top=15mm,
+  bottom=15mm
+ }
+
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+
+
+%--------------------BEGIN DOCUMENT----------------------
+\begin{document}
+
+\pagestyle{empty} % non-numbered pages
+
+\font\fb=''[cmr10]'' %for use with \LaTeX command
+
+%--------------------TITLE-------------
+%\par{\centering
+%		{\Huge Adam Cordingley}\bigskip\par}
+
+%--------------------SECTIONS-----------------------------------
+%Section: Personal Data
+\vspace{-2cm}
+\begin{tabular}{l|r}
+{\Huge Adam Cordingley}	& 
+\begin{tabular}{rl}
+\textsc{E-mail:}    & \href{mailto:adam.cordingley@case.edu}{\textcolor{black}{adam.cordingley@case.edu}} \\
+\textsc{Website:}	& \href{http://acordingley.us}{\textcolor{black}{http://acordingley.us}}\\
+\textsc{Phone:}     & +1 (304) 638-9199
+\end{tabular}
+\end{tabular}
+%\begin{tabular}{lr}
+%	\begin{tabular}{ll}
+%    	\textsc{E-mail:}    & \href{mailto:adam.cordingley@case.edu}{\textcolor{black}{adam.cordingley@case.edu}}\\
+%		\textsc{Phone:}     & +1 (304) 638-9199\\
+%	\end{tabular}
+%	&
+%	\begin{tabular}{ll}
+%		\textsc{Website:}	& \href{http://acordingley.us}{\textcolor{black}{http://acordingley.us}}\\
+%							& 
+%	\end{tabular}
+%\end{tabular}
+
+%Section: Education
+\section{Education}\vspace{-1mm}
+\begin{tabular}{rl}	
+ 2016 -- Present		& \textbf{Case Western Reserve University (CWRU)}, Cleveland, OH\\%B.S.E in \textsc{Electrical Engineering}, 
+						& \textit{Sophomore, Electrical Engineering} - \normalsize \textsc{Gpa}: 2.714
+					\vspace{2mm}\\
+Aug 2015 -- May 2016	&  \normalsize\textbf{Marshall University}, Huntington, WV\\
+						& \textit{Part-time student - CS \& Calculus II courses}
+					\vspace{2mm}\\
+2012 -- 2016			& \textbf{Huntington High School}, Huntington, WV - \textit{High School Diploma}
+\end{tabular}
+\vspace{-2mm}
+
+%Section: Work Experience
+\section{Experience}\vspace{-1mm}
+\begin{tabular}{r|p{14cm}}
+June 2018 -- 		& \textbf{Electrical Engineering Intern}\\
+Aug. 2018 			& \textit{Bird Technologies, Inc. - Solon, OH}\\
+ 				& \footnotesize{Did R\&D for an RF power measuring calorimeter. Worked with embedded systems, digital interfacing, and control processes. Worked some with PCB design. }\\
+\multicolumn{2}{c}{} \vspace{-2mm}\\
+{Aug. 2016--}		& \textbf{Web Support Staff}\\
+{Present}			& \textit{Case Western Reserve Univ. - Cleveland, OH} \\
+				&\footnotesize{I work part time during the school year for Case Western's Web Support Dev Ops Integration team. I train staff in using the Drupal content management system \& provide university-website-related support.}\\
+\multicolumn{2}{c}{} \vspace{-2mm}\\
+{Aug. 2016--}		& \textbf{Electrical Hardware Lead }\\
+{Present}			& \textit{CWRU Robotics Club (CWRUbotix)}\\
+				& \footnotesize{Member of CWRU's undergraduate multi-project robotics club. In 2016-17 I was on the National Robotics Challenge Maze-robot sub-team. In April 2017 was elected Lab \& Safety Manager. For the 2017-18 season, I'm the Electrical Hardware Lead for the NASA Robotic Mining Challenge sub-team.}\\
+\multicolumn{2}{c}{} \vspace{-2mm} \\
+
+ \textsc{2015-2016} 	& \textbf{Research Assistant}\\
+				& \textit{Marshall University - Huntington, WV}\\
+				&\footnotesize{Worked For Dr. Mike Norton at the Marshall Univ. Chemistry Department full time during the summer \& part-time during the fall \& spring semesters. I primarily worked with designing and fabricating parts (usually with FDM 3D printing) for use in research. I self-taught myself SolidWorks and learned to use NIH ImageJ. I also worked with Scanning Electron Microscopy (SEM) and Atomic Force Microscopy (AFM).}\\
+\multicolumn{2}{c}{}\vspace{-2mm} \\
+
+July 2017  			& \textbf{Youth Robotics Camp Instructor}\\
+\& July 2016		& \textit{WV Summer Science Adventures, Marshall Univ. (\href{ssawv.com}{\textcolor{black}{ssawv.com}})}\\
+				&\footnotesize{I planned, organized, and led a one week Vex robotics day camp intended for junior high \& high school students.}
+\end{tabular}
+
+
+\section{Skills \& Certifications}\vspace{-1mm}
+
+\textbf{SOLIDWORKS\textregistered~Certified Associate - Mechanical Design (CSWA)} - \textit{December 2017}\vspace{2mm}\\
+\textbf{Amateur Radio Operator}, Technician Class (Callsign: KE8ITF) - \textit{February 2018}\vspace{2mm}\\
+\textbf{\large{Software \& Languages:}}
+\vspace{1mm}\\
+\begin{tabular}{rl}
+Proficient:			& Windows, Microsoft Office, NIH ImageJ, Google Apps\\
+					& Python, Java, HTML, CSS, RobotC, Arduino C \\
+Working Knowledge:	& Linux, Altium, Eagle CAD, Eclipse, Multisim, Linux Bash, Javascript, PHP, C/C++,{\fb \LaTeX}\\
+\end{tabular}
+
+\textbf{\large{Other:}}\vspace{1mm}\\
+\begin{tabular}{ll}
+\tabitem FDM 3D printing 						& \tabitem Laser Cutting \\
+\tabitem Circuit design, implementation, and debugging	& \tabitem Basic Web Design\\
+\tabitem Scrum / Agile methodology 				& 
+\end{tabular}
+
+\section{Relevant Coursework}\vspace{-1mm}
+\begin{tabular}{ll}
+\tabitem Electronic Circuits 					& 	\tabitem Intro to Circuits \& Instrumentation	\\
+\tabitem Logic Design \& Computer Organization 	&  	\tabitem Intro to Programming in Java \\
+\tabitem Python \& Java (Marshall Univ.) 		& 
+\end{tabular}
+
+\section{Other Interests \& Activities}\vspace{-1mm}
+
+\begin{tabular}{l p{13cm}} %{p{\textwidth}}
+\tabitem \textbf{Circuits:} 		&  I enjoy building circuits, machines, \& electrical devices as a hobby \& as part of my involvement in CWRUbotix. Some examples of things I've built for fun are a digital optical tachometer, a disk sander for woodworking, and a circuit for sampling ultrasonic TOF distance sensors by analog means.\\
+\tabitem \textbf{Vex Robotics:} 	&  In 10th grade I co-founded my high school's Vex robotics competition team (team 8768A). Since then I've organized \& run youth Vex robotics summer camps. I also volunteer at Vex competitions when I can.\\
+\tabitem \textbf{Woodworking} & 
+\end{tabular}
+
+
+\end{document}

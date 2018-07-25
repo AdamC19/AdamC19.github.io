@@ -30,5 +30,26 @@ However, the RTC clock must ALSO be able to clear ALL the counters. To solve thi
 	Schematic of the 0.25 second real-time-clock built using a 555 timer.</p>
 </div>
 
-<h2> Second Iteration (Fix) </h2>
+<h2 class="center-all"> Second Iteration (Fix) </h2>
+<p>I eventually got around to fixing the issue outlined above. I added a quad-2-input NOR gate, and I was able to lose the inverters, and instead used one of the NOR gates as the inverter I needed for the RST/CLR/LE signal from the 555 timer. I also removed the redundant registers present in the first design (the 74xx4511's have internal latches). The circuit schematics are below, and I have made most of the design available as an <a href="https://easyeda.com/account/project?project=cc82e7cc42d74cbca1a877928d0ee6a2">EasyEDA project</a>.</p>
 
+<div style="display:table;width:100%;margin:0px">
+	<img src="/img/tach/tachometer_v2-0_main_circuit.png" style="display:block;width:100%" alt="v2.0 main tachometer circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the main circuit for tachometer v2.0.</p>
+</div>
+
+
+<div style="display:table;width:100%;margin:0px">
+	<img src="/img/tach/tachometer_v2-0_555_RTC.png" style="display:block;width:100%" alt="v2.0 main tachometer circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the 555 real-time-clock for tachometer v2.0.</p>
+</div>
+
+
+
+<div style="display:table;width:100%;margin:0px">
+	<img src="/img/tach/tach_encoder_sch_v1-0.png" style="display:block;width:100%" alt="v2.0 main tachometer circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the new encoder for tachometer v2.0. This was drawn in Eagle CAD, so is not on the EasyEDA project page.</p>
+</div>

@@ -3,3 +3,6 @@ _site
 3dprinterreport.html
 simple-cgi-test.py
 archive
+*.aux
+*.log
+*.synctex.gz

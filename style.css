@@ -133,9 +133,10 @@ ul.quicklinks > li > a, ul.quicklinks > ul > li > a{
 }
 
 #tile{
-	display 	: inline-block;
-	margin 		: 1.5em 2% 0px 2%;
-	width 		: 45%;
+	display 		: inline-block;
+	margin 			: 1.5em 2% 0px 2%;
+	width 			: 28%;
+	vertical-align 	: top;
 }
 #tile > img{
 	margin 		: 0px 0px 0px 0px;
@@ -171,3 +172,10 @@ a:visited#tile-link{
 /*a:hover#tile-link{
 	border-color 	: black; 
 }*/
+
+#toggle-btn{
+	width 		: 100%;
+	border 		: 0px;
+	background-color: #D3D3D3;
+	text-align 	: center; 
+}

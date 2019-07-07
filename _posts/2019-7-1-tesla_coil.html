@@ -27,25 +27,48 @@ imgurl: /img/tesla_coil_square.png
   <p style="display:inline-block;width:100%;font-size:0.75em">
   Block diagram of the driver circuit.</p>
 </div>
+<p>When an electrical arc is produced, it heats up and ionizes the air in its path creating a near vacuum. When the arc stops, the vacuum collapses. This cycle repeats, creating pressure waves in the air. By modulating the power of the arcs at an audible frequency, we can create sound. From here, the block diagram mostly speaks for itself. </p>
 
 <h2 class="center-all">The Coils</h2>
-<p>For the forms of each coil I used schedule-40 PVC pipe purchased from Home Depot. </p>
+<p>The main principle driving my coil designs is the following: more turns on the secondary means bigger arcs. Which is, all else being equal, true. But with more turns comes lower resonant frequency, so I had to be careful that the resonant frequency would stay within my 330kHz - 1.3MHz range. For mk1, I really did no calculations. I wound it up, made the torus, and tried it out. For mk2, I was careful to design it to have the most turns possible while staying above the 330kHz cutoff of my circuit. For mk3, I decided I wanted the biggest arcs possible, and have resolved to build a different circuit for that one (likely not musical).</p>
+<p>I used schedule-40 PVC pipe as the form for each coil. For mk1 and mk3, I used 2" nominal diameter pipe. For mk2 I used 1.5" nominal diameter pipe. For calculating the self inductance of a coil, I use the standard formula for the <a href="https://en.wikipedia.org/wiki/Inductance#Inductance_of_a_solenoid" target="_blank">inductance of an air-core solenoid</a>:</p>
+<p>$$ L = \frac{\mu_0N^2A}{l} $$</p>
+<p>The magnetic permeability of the PVC seems to have a negligible effect on the inductance of the coil. </p>
+<p>For calculating the capacitance due to the top load, I found you can get a close approximation using the formula for the capacitance of a disk ($$ C = 8\epsilon_0r $$). For a better approximation, you can take a look at this handy <a href="http://deepfriedneon.com/tesla_f_calctoroid.html" target="_blank">Capacitance of a Toroid Calculator from deepfriedneon.com</a>. Lastly, there is the much more difficult to calculate parasitic capacitance of the coil. You can assume that it will be on the order of 1 to 2 pF. Really, the point of these calculations is make sure the resonant frequency will be in the right ballpark. </p>
 <table class="center-all">
   <tr>
     <th>Coil Iteration</th>
     <th>Height</th>
+    <th>Diameter</th>
     <th>Wire Gauge</th>
     <th>Turns</th>
-    <th>Torus Diameter</th>
     <th>Self Inductance</th>
   </tr>
   
   <tr>
     <td>mk1</td>
     <td>35 cm</td>
+    <td>6.06 cm</td>
     <td>30 AWG</td>
     <td>~1500</td>
     <td> ---- </td>
-    <td> ---- </td>
+  </tr>
+
+  <tr>
+    <td>mk2</td>
+    <td>35 cm</td>
+    <td>4.83 cm</td>
+    <td>34 AWG</td>
+    <td>~2000</td>
+    <td> ~40 mH </td>
+  </tr>
+
+  <tr>
+    <td>mk3</td>
+    <td>58 cm</td>
+    <td>6.06 cm</td>
+    <td>34 AWG</td>
+    <td>~3250</td>
+    <td> ~66.5 mH </td>
   </tr>
 </table>

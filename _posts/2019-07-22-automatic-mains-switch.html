@@ -1,0 +1,23 @@
+---
+layout: posts
+title: Automatic Mains Switch
+subhead: Power a secondary load when a primary load is detected
+imgurl: /img/auto_mains_switch_square.png
+---
+<h2 class="center-all">Overview</h2>
+<p>I initially got this idea from a project by woodworker John Heisz who built an <a href="https://ibuildit.ca/projects/simple-load-sensing-automatic-switch/">automatic mains switch</a>. His design is elegantly simple, but a few things I don't like about it are that it requires around a 10A load to trigger the secondary circuit, it requires a special large-ish transformer, and it can only successfully trigger a solid state "relay". This is all fine I guess, but I wanted to try my hand at a similar switch that would trigger at lower load current and energize an electro-mechanical relay, meaning it could be adapted to switch a DC load or signal another device if desired. </p>
+
+<p>I wanted to use a simple current-sense transformer and detect a load using a peak-detector circuit. I found a small toroidal inductor core, around which I wrapped several turns of 14 AWG solid-core copper wire as the primary and a dozen or so turns of 22 AWG solid-core wire as the secondary. I then put together the following circuit:</p>
+<div style="display:table;width:60%;margin:0px auto">
+  <img src="/img/auto_mains_switch_schematic.png" style="display:block;width:100%" alt="Schematic of my automatic mains switch">
+  <p style="display:inline-block;width:100%;font-size:0.75em">
+  Schematic of my automatic mains switch circuit.</p>
+</div>
+
+<p>The power supply is as simple as it gets using a capacitive dropper, a bridge rectifier, and a 12V zener diode. The capacitive dropper, C2 and C3, should use class Y film capacitors for safety, and R2 additionally should be a fusible resistor. A MOV wouldn't be a bad idea either. The user will never be touching or interacting with any part of this circuit, which is why I think this approach is OK. </p>
+
+<p>The signal from the transformer can probably only supply minimal current. Fortunately our DC restorer, 100k&ohm; resistor, and 1pA op-amp input barely load it down. This signal is then amplified 10x and put through a peak detector circuit. The second half of the TLV272 is configured as a simple comparator with an adjustable threshold. </p>
+
+<p>I'm using a neat trick for switching the relay. My relay coil's DC resistance was ~150&ohm; which would draw ~80mA in it's on state &ndash; too much for my low-power circuit. Like most relays, however, it only requires so much current when switching on, and once on it can stay on with less than half of this initial current &ndash; ~30mA in my case. This is often called the holding current. To achieve this, I include C6 to provide the initial switch-on current. Once on, R9 limits the current to ~33mA. </p>
+
+<p>In terms of power usage, the TLV272 takes about 1.1mA. The current required to drive any external loads is minimal. The BJT base will draw about 1.1mA. The relay is the biggest power user, in my case using ~33mA when on. Safe to say the entire circuit will draw maybe 35&ndash;40 mA. </p>

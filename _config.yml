@@ -1,6 +1,6 @@
 # Site settings
-title: Backdrive
-email: your-email@domain.com
+title: Adam Cordingley
+email: adam@acordingley.us
 baseurl: "" # the subpath of your site, e.g. /blog/
 
 # Build settings
@@ -10,5 +10,14 @@ defaults:
   -
     scope:
       path: "" # an empty string here means all files in the project
+      type: "pages"
     values:
       layout: "default"
+
+plugins:
+  - jekyll-redirect-from
+
+whitelist:
+  - jekyll-redirect-from
+
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+{% include default-head.html %}
+
+<body>
+	<div id="backdrop" class="center">
+		<!--<img src="img/web_header.png">-->
+		<h1 id="header">Adam Cordingley</h1>
+		{% include default-nav.html %}
+		
+		<div id="content" class="center">
+		
+			{{ content }}
+		</div>
+	</div>
+	
+	{% include default-footer.html %}
+
+</body>
+</html>

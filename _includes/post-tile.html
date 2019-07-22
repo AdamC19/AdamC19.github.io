@@ -1,0 +1,11 @@
+
+
+{% for post in site.posts %}
+<a id="tile-link" href="{{post.url}}">
+	<div id="tile">
+		<img id=tile-img" src="{{post.imgurl}}">
+		<span id="post-title">{{post.title}}</span>
+		<span id="tile-caption">{{post.subhead}}</span>
+	</div>
+</a>
+{% endfor %}

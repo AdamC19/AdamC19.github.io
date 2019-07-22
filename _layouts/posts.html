@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+{% include default-head.html %}
+	
+<body>
+	<div id="backdrop" class="center">
+
+		<h1 id="header">Adam Cordingley</h1>
+
+		{% include default-nav.html %}
+
+		<div id="content" class="center">
+			<h1 class="center-all">{{ page.title }}</h1>
+			<h3 class="center-all">{{ page.subhead }}</h3>
+		
+			{{ content }}
+		</div>
+	</div>
+
+	{% include default-footer.html %}
+
+</body>
+</html>

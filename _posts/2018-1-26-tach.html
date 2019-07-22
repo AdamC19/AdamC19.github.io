@@ -1,0 +1,55 @@
+---
+layout: posts
+title: Digital Tachometer
+subhead: How I made a digital engine tachometer for my vehicle.
+imgurl: /img/tach-square.png
+---
+<h2 class="center-all">Overview</h2>
+<p>I own a 2000 Chevy S10 with an automatic transmission. In order to, I assume, cut production cost, the stock version did not come with an engine tachometer. Although it's not strictly needed, being an automatic, this gave me an excuse to attempt to build my own. <br>
+I wanted it to be a challenge, however, so I decided to do it without using a microcontroller (for example, an Arduino). 
+</p>
+<h2 class="center-all">Theory of Operation</h2>
+<p>My setup imagines an encoder on the engine flywheel that would produce 1 or more square waves per revolution. These pulses would be counted by several binary counters. There would also be a real time clock (RTC) that would reset the whole thing at a regular period. <br>
+The potential challenge of such a setup is that it seems that it needs some way to calculate Revolutions-Per-Minute from the binary counts it's receiving. Naturally, this would be trivial with a microcontroller. What I decided to do was contrive the setup so that each binary counter would store a single decimal number. They would be externally programmed, with logic gates, to clear when they reach 10 and carry out to the next counter. I could also control two other variables: the "counts-per-revolution" and the clock period. With a clock period of 0.25 seconds and a counts-per-revolution of 24, the number of counts received in that interval will equal RPM/10. this meant that I could acheive +/- 10 RPM of accuracy without doing complex calculations. The numbers from the counters would simply be fed into registers, then the registers to 7-segment display decoders. I drew up some schematics, picked some components, and soon had my first design. </p>
+<h2 class="center-all">First Design</h2>
+<p> This design suffers an unfortunate flaw. It was caused by me not reading the binary counter documentation closely enough. It has to do with the function of each counter clearing itself when it reaches 10. It detects this case with an AND gate on the QB and QD outputs. It produces a rising edge to clock the next counter. It also goes through an inverter to produce an inverted logic signal to for the CLR function. <br>
+However, the RTC clock must ALSO be able to clear ALL the counters. To solve this conflict, instead of adding a logic gate to the CLR input (I opted for this later), I chose to use CLR for the RTC-clear, and use the LOAD input for the self-clearing function (intending for it to load 0000). If I had read the documentation more carfully, I would have learned that the LOAD function does not affect the outputs until the next CLK cycle! Meaning that every 10 clock cycles the counter sees, it misses 1! Thus, in each stage, we have a loss rate of 1/11. I learned all this after I soldered it up and debugged it with an oscilloscope. The lesson is: read the documentation.</p>
+<div style="display:table;width:100%;margin:0px">
+	<img src="/img/tach/tach_counter_full.svg" style="display:block;width:100%" alt="Main tachometer circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the main circuit for the tachometer.</p>
+</div>
+<div style="display:table;width:40%;margin:2%">
+	<img src="/img/tach/optical_encoder_schematic.png" style="display:block;width:100%" alt="optical encoder circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the optical encoder.</p>
+</div>
+<div style="display:table;width:40%;margin:2%">
+<img src="/img/tach/555_real_time_clock.PNG" style="display:block;width:100%" alt="555 timer real-time-clock circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the 0.25 second real-time-clock built using a 555 timer.</p>
+</div>
+
+<h2 class="center-all"> Second Iteration (Fix) </h2>
+<p>I eventually got around to fixing the issue outlined above. I added a quad-2-input NOR gate, and I was able to lose the inverters, and instead used one of the NOR gates as the inverter I needed for the RST/CLR/LE signal from the 555 timer. I also removed the redundant registers present in the first design (the 74xx4511's have internal latches). The circuit schematics are below, and I have made most of the design available as an <a href="https://easyeda.com/account/project?project=cc82e7cc42d74cbca1a877928d0ee6a2">EasyEDA project</a>.</p>
+
+<div style="display:table;width:100%;margin:0px">
+	<img src="/img/tach/tachometer_v2-0_main_circuit.png" style="display:block;width:100%" alt="v2.0 main tachometer circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the main circuit for tachometer v2.0.</p>
+</div>
+
+
+<div style="display:table;width:100%;margin:0px">
+	<img src="/img/tach/tachometer_v2-0_555_RTC.png" style="display:block;width:100%" alt="v2.0 main tachometer circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the 555 real-time-clock for tachometer v2.0.</p>
+</div>
+
+
+
+<div style="display:table;width:100%;margin:0px">
+	<img src="/img/tach/tach_encoder_sch_v1-0.png" style="display:block;width:100%" alt="v2.0 main tachometer circuit schematic">
+	<p style="display:inline-block;width:100%;font-size:0.75em">
+	Schematic of the new encoder for tachometer v2.0. This was drawn in Eagle CAD, so is not on the EasyEDA project page.</p>
+</div>

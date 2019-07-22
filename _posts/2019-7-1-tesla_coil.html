@@ -1,0 +1,80 @@
+---
+layout: posts
+title: Tesla Coil
+subhead: My experiments with Tesla coils
+imgurl: /img/tesla_coil_square.png
+---
+<h2 class="center-all">Overview</h2>
+<p>I got interested in builing Tesla coils when I saw YouTuber <a href="http://www.electroboom.com/" target="_blank">ElectroBOOM</a>'s videos on Tesla coils. I was also influenced by the <a href="http://onetesla.com/" target="_blank">OneTesla</a> design (which ElectroBOOM reviews on his channel). What I wanted was a circuit that would play high fidelity music, similar to ElectroBOOM's design and unlike the OneTesla design. The driver needed to be solid state, and naturally I wanted the biggest arcs possible.</p> 
+<p>My tesla coil driver is a single resonant solid state driver. It also seems accurate to me to call it a <a href="https://en.wikipedia.org/wiki/Tesla_coil#Types" target="_blank">continuous wave type</a> driver, as it drives the primary with a continuous AC voltage (although not a clean sine wave). My primary requirement for the control circuit was that it shall lock on to the resonant frequency of the secondary coil. ElectroBOOM notes that the lack of this feature is a shortcoming of his design. The OneTesla design also lacks secondary feedback, instead opting for a primary LC circuit that resonates close enough to the nominal resonant frequency of the tower.</p>
+
+
+<h2 class="center-all">The Driver Circuit</h2>
+
+<h3 class="center-all">Concept of operation</h3>
+<div style="display:table;width:100%;margin:0px">
+  <img src="/img/tesla_coil/driver_circuit_block_diagram.png" style="display:block;width:100%" alt="Block diagram of the driver circuit">
+  <p style="display:inline-block;width:100%;font-size:0.75em">
+  Block diagram of the driver circuit.</p>
+</div>
+<p>When an electrical arc is produced, it heats up and ionizes the air in its path creating a near vacuum. When the arc stops, the vacuum collapses. This cycle repeats, creating pressure waves in the air. By modulating the power of the arcs at an audible frequency, we can create sound. From here, the block diagram mostly speaks for itself. </p>
+
+<p> Below is a high level schematic of my circuit. Important thing to note: the half-bridge is driving an LC circuit, however it is NOT used as a RESONANT LC circuit. The half-bridge is switched at the resonant frequency of the secondary LC circuit - the purpose of the capacitor (we'll call it the coupling capacitor) is to simply pass the AC voltage produced by the half-bridge while blocking any DC that might occur (such as when there is no PWM input signal). In fact, if we were to drive that LC circuit at it's resonant frequency with the half bridge, we would indeed get a large (desirable) voltage on the primary, but would swiftly destroy our half-bridge. When this LC circuit is resonating, the voltage across the primary is reaching several kilovolts in amplitude, making the voltage across the coupling capacitor also several kilovolts and allowing large current to flow through it when either FET is on, causing our FET's to experience very high current, so you want this LC circuit's resonant frequency to not be reached by the control circuit. Of course, I'm living life on the edge with my LC circuit's resonant frequency at ~570kHz, but all my coils tend to resonate at less than 500kHz. Fingers crossed.
+<div style="display:table;width:60%;margin:0px auto">
+  <img src="/img/tesla_coil/driver_conceptual_schematic.png" style="display:block;width:100%" alt="Conceptual schematic of my tesla coil driver">
+  <p style="display:inline-block;width:100%;font-size:0.75em">
+  High level schematic of my driver circuit.</p>
+</div>
+
+<h3 class="center-all">Choice of Switching Device</h3>
+<p> With all power electronics, the choice of switching device is critical. In more traditional Solid State Tesla Coil (SSTC) circuits, the switches exist to simulate a spark gap, and by firing the "spark gap" at audible frequencies, tones can be produced. Usually, designers choose IGBTs for their ability to withstand high voltage and relatively high current, plus the insulated gate is a nice feature. IGBT's are somewhat slow, and generally good for sub-200kHz switching. For my continuous wave design, however, I need to switch the half bridge at the resonant frequency of the secondary, which is typically between 300 kHz and 1 MHz or more (although all my coils resonate below 500kHz). This requires fast switches, which means MOSFET's. MOSFET's are notoriously sensitive and easily destroyed, so careful design is a must. My first choice was to use Silicon Carbide (SiC) MOSFET's, which can withstand voltages comparable to IGBT's, have very low gate charge (10's of nano-Coulombs), low R<sub>DS(ON)</sub>, and nice thermal properties. My first choice was the Cree/Wolfspeed <a href="https://www.wolfspeed.com/c3m0120090d" target="_blank">C3M0120090D</a>, but I later switched to the <a href="https://www.wolfspeed.com/c3m0065090D" target="_blank">C3M0065090D</a> in favor of its lower R<sub>DS(ON)</sub>.</p>
+
+<h3 class="center-all">Driving the MOSFET's</h3>
+<p>For driving the gates, I chose the <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/ADuM4120-4120-1.pdf">ADUM4120-1BRIZ</a> isolated gate driver. To provide the two isolated floating power rails, I chose the <a href="https://www.meanwell.com/Upload/PDF/SPU03/SPU03-SPEC.PDF">SPU03M-15</a> 15V isolated DC-DC converters. I also put a 17V zener diode from gate to source on each FET to prevent fast transitions or transients from shooting through the gate-drain capacitance and blowing out the gates. The PWM signal comes from the separate control board. For reliable transmission of this signal, I settled on using a SN65HVD1050 CAN-bus transceiver. The PWM signal is then translated into the drive signals for the FET's with a few 74AHC00's and some RC networks to provide delay/dead-time between switching each FET.</p>
+
+<h3 class="center-all">Control Circuit</h3>
+<p></p>
+
+<h2 class="center-all">The Coils</h2>
+<p>The main principle driving my coil designs is the following: more turns on the secondary means bigger arcs. Which is, all else being equal, true. But with more turns comes lower resonant frequency, so I had to be careful that the resonant frequency would stay within my 330kHz - 1.3MHz range. For mk1, I really did no calculations. I wound it up, made the torus, and tried it out. For mk2, I was careful to design it to have the most turns possible while staying above the 330kHz cutoff of my circuit. For mk3, I decided I wanted the biggest arcs possible, and have resolved to build a different circuit for that one (likely not musical).</p>
+<p>I used schedule-40 PVC pipe as the form for each coil. For mk1 and mk3, I used 2" nominal diameter pipe. For mk2 I used 1.5" nominal diameter pipe. For calculating the self inductance of a coil, I use the standard formula for the <a href="https://en.wikipedia.org/wiki/Inductance#Inductance_of_a_solenoid" target="_blank">inductance of an air-core solenoid</a>:</p>
+<p>$$ L = \frac{\mu_0N^2A}{l} $$</p>
+<p>The magnetic permeability of the PVC seems to have a negligible effect on the inductance of the coil. </p>
+<p>For calculating the capacitance due to the top load, I found you can get a close approximation using the formula for the capacitance of a disk: $$ C = 8\epsilon_0r $$ For a better approximation, you can take a look at this handy <a href="http://deepfriedneon.com/tesla_f_calctoroid.html" target="_blank">Capacitance of a Toroid Calculator from deepfriedneon.com</a>. Lastly, there is the much more difficult to calculate parasitic capacitance of the coil. You can assume that it will be on the order of 1 to 2 pF. Really, the point of these calculations is make sure the resonant frequency will be in the right ballpark. </p>
+<table class="center-all">
+  <tr>
+    <th>Coil Iteration</th>
+    <th>Height</th>
+    <th>Diameter</th>
+    <th>Wire Gauge</th>
+    <th>Turns</th>
+    <th>Self Inductance</th>
+  </tr>
+  
+  <tr>
+    <td>mk1</td>
+    <td>35 cm</td>
+    <td>6.06 cm</td>
+    <td>30 AWG</td>
+    <td>~1500</td>
+    <td> ---- </td>
+  </tr>
+
+  <tr>
+    <td>mk2</td>
+    <td>35 cm</td>
+    <td>4.83 cm</td>
+    <td>34 AWG</td>
+    <td>~2000</td>
+    <td> ~40 mH </td>
+  </tr>
+
+  <tr>
+    <td>mk3</td>
+    <td>58 cm</td>
+    <td>6.06 cm</td>
+    <td>34 AWG</td>
+    <td>~3250</td>
+    <td> ~66.5 mH </td>
+  </tr>
+</table>

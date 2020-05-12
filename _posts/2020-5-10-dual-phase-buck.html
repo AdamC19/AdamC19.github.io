@@ -1,0 +1,73 @@
+---
+layout: posts
+title: Dual-Phase Synchronous Buck - 1000W
+subhead: (IN PROGRESS) Building a digitally controlled dual-phase synchronous buck converter
+imgurl: /img/1000W_power_supply/power_supply_square.png
+permalink: /dual-phase-buck/
+---
+<p> My university robotics team, <a href="http://cwrubotix.org">CWRUbotix</a> does frequent bench-testing of our robots. So I've taken it upon myself to build an adequate bench power supply. It needs to be variable from less than 12V to at least 48V and supply as much as 1000W. That's a lot of power supply. I found that sourcing beefy transformers is pretty hard, so I decided to start with off-the-shelf AC-to-DC power supplies. Then I would implement some kind of buck converter. For 1000W, I knew it would have to be multiphase. I started with the following basic concept:</p>
+
+<a style="display:block;width:65%;" class="center-all" href="/img/1000W_power_supply/concept.png">
+    <img width="100%" src="/img/1000W_power_supply/concept.png" />
+</a>
+
+<p>12V power supplies are easy to come by (<a href="https://www.amazon.com/gp/product/B06VWV5YCH">$18.88 each on Amazon</a>>), so I figured I'd stack up 4 of them to acheive the 48V required (I trim each one up to 12.5V to account for losses). After some back-of-the-envelope calculations and much deliberation, I decided on two phases. I also decided to make it a synchronous topology because I need efficiency (even 5% loss at 1000W would be 50W to dissipate). </p>
+
+<p>Next, I decided I would make it digitally controlled. The main driver behind this was discovering some STM32's have high-resolution timers. Their inner workings are pretty neat and they're highly configurable. The bottom line is they allow high resolution PWM even at relatively high frequency (100's of kHz in this application). My jumping off point was this application note from ST: <a href="https://www.st.com/resource/en/application_note/dm00121475-hrtim-cookbook-stmicroelectronics.pdf">AN4539 - HRTIM cookbook</a>. It has examples for a single phase synchronous buck and a multi-phase asynchronous buck, but some augmentation was needed for my application, as I will discuss shortly.</p>
+
+<h2 class="center-all">Design Process</h2>
+<p>For the schematics, jump on down to <a href="{{page.url}}#schematics">here</a>.</p>
+<h3 class="center-all">Power Section</h3>
+<p>To me, the most critical choices in this design were the switching transistors, inductors, and switching frequency. Finding suitable magnetics was the toughest part to me, so that's where I started. I wanted the largest inductance possible (to keep the switching frequency as low as possible) with the highest saturation rating possible. I identified a 6.8uH inductor with a 32A saturation current. That would do it. </p>
+
+<h3 id="afe" class="center-all">Analog Front-End</h3>
+<p>Another important choice was how to handle the analog front end. Using the built-in 12-bit ADC's and basic feedback circuitry, it would allow at best about 12mV resolution. With some oversampling, that could be enough to make me happy. But I figured as long as I'm building this from scratch, I might as well make it nice. Although a 16-bit ADC would be sufficient, I elected to use a 24-bit ADC, the AD7172, because why not. It's highest sample rate is 31.25 kSPS, and at that rate about 20 bits are noise free. If this unit does nothing else, it will measure voltage and current really well.</p>
+
+<h3 id="summary" class="center-all">Major Component Summary</h3>
+<table class="center-all">
+    <tr>
+        <th>Component</th>
+        <th>Description</th>
+        <th>Manufacturer</th>
+        <th>MFG Part #</th>
+    </tr>
+    <tr>
+        <td>Microcontroller</td>
+        <td>IC MCU 32BIT 64KB FLASH 64LQFP</td>
+        <td>STMicroelectronics</td>
+        <td><a href="https://www.st.com/resource/en/datasheet/stm32f334c8.pdf">STM32F334R8T6</a></td>
+    </tr>
+    <tr>
+        <td>ADC</td>
+        <td>IC ADC 24BIT SIGMA-DELTA 24TSSOP</td>
+        <td>Analog Devices</td>
+        <td><a href="https://www.analog.com/media/en/technical-documentation/data-sheets/AD7172-2.pdf">AD7172-2</a></td>
+    </tr>
+    <tr>
+        <td>MOSFETs</td>
+        <td>MOSFET N-CH 100V 131A D2PK TO263</td>
+        <td>Vishay Siliconix</td>
+        <td><a href="http://www.vishay.com/docs/65383/sum70060e.pdf">SUM70060E-GE3</a></td>
+    </tr>
+    <tr>
+        <td>Inductors</td>
+        <td>FIXED IND 6.8UH 36A 3.1 MOHM SMD</td>
+        <td>Bourns</td>
+        <td><a href="https://www.bourns.com/docs/Product-Datasheets/SRP2313AA.pdf">SRP2313AA-6R8M</a></td>
+    </tr>
+    <tr>
+        <td>Output Caps</td>
+        <td>CAP ALUM 220UF 20% 160V RADIAL</td>
+        <td>Nichicon</td>
+        <td><a href="https://www.nichicon.co.jp/english/products/pdfs/e-ucs.pdf">UCS2C221MHD1TN</a></td>
+    </tr>
+</table>
+
+
+<h3 class="center-all">Control Waveforms</h3>
+<a style="display:block;width:50%;" class="center-all" href="/img/1000W_power_supply/dual_phase_buck_timing.png">
+    <img width="100%" src="/img/1000W_power_supply/dual_phase_buck_timing.png" />
+</a>
+
+<h2 class="center-all" id="schematics">The Schematics</h2>
+<object width="100%" height="750px" data="files/1000W_power_supply/Dual_Phase_Buck_Converter.pdf"></object>

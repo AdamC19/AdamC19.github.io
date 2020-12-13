@@ -1,0 +1,67 @@
+---
+layout: posts
+title: Multiphase Forward Converter - 1000W
+subhead: (IN PROGRESS) Building a digitally controlled multiphase isolated forward converter
+imgurl: /img/multiphase_converter/iso_view_2.png
+permalink: /multiphase-converter/
+---
+
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <img src="{{site.url}}/img/multiphase_converter/top_view.png">
+    <p>Top view of assembled board</p>
+</div>
+
+<h2 class="" id="links">Links</h2>
+<div style="width: 50%;">
+<ul>
+    <li><a href="https://github.com/AdamC19/Multiphase-Converter-FW">GitHub repo for firmware source files</a></li>
+    <li><a href="https://github.com/AdamC19/Multiphase-Converter">GitHub repo for hardware source files</a></li>
+</ul>
+</div>
+
+<h2 class="" id="Overview">Overview</h2>
+
+<p>
+    What I'm building is a digitally controlled multiphase isolated forward converter with active power factor correction. This approach to the 1000W power supply was the approach I wanted to take from the beginning. What was holding me back was limited availability of high power SMPS transformers from distributors. It was looking like I would have to order some custom transformers when I happened across some transformers made by Wurth, being sold by both Mouser and RS Components, rated for about 250W. They were a lucky find. I ended up buying 8 from RS Components, since Mouser had a minimum order of 15. 
+</p>
+
+<h3 class="" id="topology">Topology</h3>
+<p>
+    <div class="captioned-img" style="width:40%;float:right;">
+        <img src="{{ site.url }}/img/multiphase_converter/two_switch_forward_converter.png" />
+        <p>Single phase two-switch forward converter<a href="{{ page.url }}#ref1">[1]</a></p>
+    </div>
+    This device is sort of like 4 separate power supplies with their outputs interleaved together. Each of these "sub-supplies" could be any topology you want. The power requirement already eliminated a flyback. Next, the transformer's winding arrangement eliminated a push-pull. So my options were narrowed down to a forward, half-bridge, or full-bridge. I chose a two-switch forward converter topology (pictured right) for a few reasons. First, I could do it with only 2 switching elements. Sure a half-bridge has only 2 switches as well, but it requires sizeable high-voltage capacitors, and the primary voltage is cut in half. Second is just is the simplicity of the driving signals - I could feed the same signal to the high-side and low-side switch. No need to deal with deadtime (although the HR timer would handle this) and having a different signal for the low and high side switches.
+</p>
+
+<h3 class="" id="control">Digital Control</h3>
+<p>
+    My choice for the controller was an ST part - the STM32F334C8<a href="{{ page.url }}#ref2">[2]</a> - which has one of their high-resolution timer blocks. I opted to use one of the built-in 12-bit ADC's for feedback, because they're fast and can be tightly integrated with the HR timer. This meant the feedback and control would be on the secondary side, and I would send the digital control signals across the isolation barrier to the primary side.
+</p>
+<p>
+    The control of an isolated forward converter is a lot like a buck converter (which is a type of forward converter). There are some differences, but let's run with this comparison for a moment. Imagine you take a buck converter and replace the input power supply and MOSFET with the secondary of a transformer plus a diode. Everything after that is the same (inductor, freewheeling diode, capacitor). Everything before that is for switching the primary of said transformer. The control, incidentally, is almost the same. The main difference is a new constraint - that the duty cycle can't be greater than 50%. In short this is because the transformer's primary needs to be allowed to fly back in order to demagnitize the core. The amount of time it needs will be equal to the on-time of the switches. 
+</p>
+
+<h2 class="" id="Results">Results</h2>
+<p>
+    Testing and firmware refinement is in progress!
+</p>
+
+<h2 class="" id="schematics">Schematics</h2>
+
+<p class="center-all"><a href="{{ site.url }}/files/multiphase_converter/multiphase_converter_schematic.pdf">Download Schematics as PDF</a>&nbsp;</p>
+<object width="100%" height="500px" data="{{ site.url }}/files/multiphase_converter/multiphase_converter_schematic.pdf"></object>
+
+<h2 class="" id="schematics">References</h2>
+
+<ol>
+    <li>
+        <p id="ref1">"<a href="https://www.ti.com/lit/ug/slyu032/slyu032.pdf?ts=1607679033468">Power Topologies Quick Reference Guide</a>." ti.com. https://www.ti.com/lit/ug/slyu032/slyu032.pdf?ts=1607679033468 (accessed Dec. 12, 2020).</p>
+    </li>
+    <li>
+        <p id="ref2">"<a href="https://www.st.com/en/microcontrollers-microprocessors/stm32f334c8.html">Mainstream Mixed signals MCUs Arm Cortex-M4 core with DSP and FPU, 64 Kbytes of Flash memory, 72 MHz CPU, CCM, 12-bit ADC 5 MSPS, comparators, op-amp, hr timer</a>." st.com. https://www.st.com/en/microcontrollers-microprocessors/stm32f334c8.html (accessed Dec. 12 2020).</p>
+    </li>
+    <li>
+        <p id="ref3">"<a href="https://www.st.com/resource/en/application_note/dm00121475-hrtim-cookbook-stmicroelectronics.pdf">AN4539 Application Note HRTIM Cookbook</a>." st.com. https://www.st.com/resource/en/application_note/dm00121475-hrtim-cookbook-stmicroelectronics.pdf (accessed Dec. 12 2020).</p>
+    </li>
+</ol>

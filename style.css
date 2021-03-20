@@ -196,3 +196,12 @@ a:visited#tile-link{
 .captioned-img > p{
 	font-size 	: 0.9em;
 }
+
+.in-text-ref {
+	vertical-align: 	super;
+	background:			#D3D3D3;
+	border: 			none;
+	text-decoration: 	none;
+	font-size: 			0.75em;
+	padding: 			0px 0px;
+}

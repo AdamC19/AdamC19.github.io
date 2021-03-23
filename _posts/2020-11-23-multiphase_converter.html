@@ -49,7 +49,15 @@ permalink: /multiphase-converter/
 <p>
     At it's core, this is a voltage mode forward converter. I could talk about how the forward topology is pretty easy to stabilize because it doesn't have a right-half-plane zero in its power stage transfer function. But I feel more equipped to talk about how we can intuitively design a usable controller without going into complex math. 
 
-    First let's think about the desired state of the controller. We want the output to equal the set-point, meaning we want the error to be zero. If the error is zero, then the proportional term equals 0. This means that our integral term is responsible for producing the steady state duty cycle. In fact, you can build a crude voltage-mode controller using only integral control. So what does the proportional term really do? Imagine we're cruising along at 24V and 1A output. Then BAM, the load changes and suddenly starts drawing 10A and our voltage drops rapidly. In the very short term that current can be supplied from the output capacitors, but to maintain our 24V, we need to change the current through the output inductor quickly. This means briefly increasing the duty cycle to magnetize the inductors to a higher current, then dialing it back once we're there.  
+    First let's think about the desired state of the controller. We want the output to equal the set-point, meaning we want the error to be zero. If the error is zero, the proportional term equals 0. So our integral term is responsible for producing the steady state duty cycle. In fact, you can implement a crude voltage-mode controller using only integral control. So what does the proportional term really do? It's when the current through the inductors needs to change in response to a sudden change in load current. Imagine the load steps from 1A to 10A. In the very short term that current can be supplied from the output capacitors, but to maintain the output voltage, we need to change the current through the output inductor quickly. This means briefly increasing the duty cycle to magnetize the inductors to a higher current. We'd also like the deviation from the setpoint to be minimal, say 100mV max. So 100mV needs to produce a sufficient change in the duty cycle to correct the short term error induced by load step changes.
+
+    A popular method for empirically arriving at reasonable constants for your P and I terms is to start with P, then move on to I. You increase P by 20% at a time until your output starts to oscillate, then cut it in half and gradually increase I to get the desired response. This works since you want P to be pretty high in order to be really reponsive to steps and transients, just not so high that it oscillates. 
+</p>
+
+<h3 id="integer-math">Sticking With Integer Math</h3>
+
+<p>
+    Although the ARM Cortex-M4 has an FPU, it seemed wise to stick with integer math operations in the interrupt-service-routines. To achieve this, I first decided that the voltage and current measurements should be in millivolts and milliamps, both stored in integers. Thus the voltage setpoint is in mV too. 
 </p>
 
 <h3 id="phases">Phase Adding and Shedding</h3>

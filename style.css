@@ -185,3 +185,14 @@ a:visited#tile-link{
 	background-color: #D3D3D3;
 	text-align 	: center; 
 }
+
+.captioned-img{
+	margin:10px;
+	text-align: center;
+}
+.captioned-img > img{
+	width:100%;
+}
+.captioned-img > p{
+	font-size 	: 0.9em;
+}

@@ -193,6 +193,9 @@ a:visited#tile-link{
 .captioned-img > img{
 	width:100%;
 }
+.captioned-img > a > img{
+	width:100%;
+}
 .captioned-img > p{
 	font-size 	: 0.9em;
 }

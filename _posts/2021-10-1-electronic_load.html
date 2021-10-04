@@ -1,0 +1,44 @@
+---
+layout: posts
+title: Multi-Channel Electronic Load
+subhead: A large electronic load for high power things
+imgurl: /img/electronic_load_square.png
+permalink: /electronic-load/
+---
+
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/electronic_load/electronic_load_iso.png"><img src="{{site.url}}/img/electronic_load/electronic_load_iso.png"></a>
+    <p>My 8-channel electronic load.</p>
+</div>
+
+<p>How much power, you ask? Well that's a good question. I haven't yet fried any of the components, but at around 350W, the MOSFETs get "pretty hot", so I haven't pushed it much beyond that point. I'm probably just being paranoid. I designed the whole system to handle up to around 48V in, and each module can be set to sink about 19A at full scale. Of course whether or not a module's transistor can actually survive 19A for very long depends on the applied voltage. 
+</p>
+
+<h2 class="" id="operation">Theory of Operation</h2>
+<p>The electronic load is built from 8 modules/channels controlled by a single control board. Each module has a 10-bit DAC which sets the current set-point, a shunt resistor and a chopper amp to sense the current, and an op-amp to drive the gate of a power MOSFET. The module also has a 3.3V linear regulator to provide a locally regulated supply and reference for the DAC and chopper amp. </p>
+
+
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/electronic_load/module.png"><img src="{{site.url}}/img/electronic_load/module.png"></a>
+    <p>Close-up of one of the modules/channels.</p>
+</div>
+<div style="width: 80%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/electronic_load/module_schematic.png"><img src="{{site.url}}/img/electronic_load/module_schematic.png"></a>
+    <p>Schematic of a single electronic load module.</p>
+</div>
+
+<p>The controller uses an STM32L432, which I bought before the chip shortage got bad. It also has a few 74HC4051 muxes which it uses to continuously scan across all eight channels, one-at-a-time, setting the current over I<sup>2</sup>C and sampling the current-sense voltage with the built-in 12-bit ADC. It's also responsible for sensing the voltage that's presumably applied across each module, simply with a resistive divider and another ADC channel.</p>
+
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/electronic_load/controller.png"><img src="{{site.url}}/img/electronic_load/controller.png"></a>
+    <p>The electronic load controller itself.</p>
+</div>
+<div style="width: 80%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/electronic_load/controller_schematic.png"><img src="{{site.url}}/img/electronic_load/controller_schematic.png"></a>
+    <p>Schematic of the electronic load controller.</p>
+</div>
+
+
+<h2 class="" id="software">Software Control</h2>
+
+<p>The controller is communicated with via UART using SCPI commands. It was going to be over USB, but I ran into "mysterious" problems with the USB connection and decided to switch to UART to move the project along. I decided to build a web app using flask and angular JS. The flask part runs on a raspberry pi. The RPi serves up a webpage and the angular JS part runs in a browser. </p>

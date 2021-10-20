@@ -51,18 +51,26 @@ permalink: /mmpsu/
 </p>
 <h3>Digital Control with the HRTIM</h3>
 <p>
-    <img style="float:left;width:40%;margin: 10px 20px;" src="{{site.url}}/img/mmpsu/HRTIM_timing_diagram_Page_1.png" />
-    The high-resolution timer included in some STM32 microcontrollers is really a thing of beauty. Other microcontrollers have similar features, but the STM32 variants are the ones I've worked with. On the left you can see a diagram of how we're controlling the timers and the outputs. Since the master timer, and in fact all the timers, have only 4 compare registers each, I couldn't trigger the reset of all 6 timer channels at different phase angles from only the master timer. So I devised the more complex scheme you see there. 
+    <img style="float:left;width:35%;margin: 10px 20px;" src="{{site.url}}/img/mmpsu/HRTIM_timing_diagram_Page_1.png" />
+    The high-resolution timer included in some STM32 microcontrollers is really a thing of beauty. Other microcontrollers have similar features, but the STM32 variants are the ones I've worked with. On the left you can see a diagram of how we're controlling the timers and the outputs. Since the master timer, and in fact all the timers, have only 4 compare registers each, I couldn't trigger the reset of all 6 timer channels at different phase angles from only the master timer. So I devised the more complex scheme you see there. Our system operates with a switching frequency of about 1MHz. As it shakes out, our resolution of control over the duty cycle is about 0.018% - plenty of precision for this application.
     <br />
     <br />
     My starting point was the <a href="https://www.st.com/resource/en/application_note/dm00121475-hrtim-cookbook-stmicroelectronics.pdf" target="_blank">HRTIM Cookbook</a> application note, which has a simple multiphase buck example and a synchronous buck example. Basically I had to merge the two and expand the concept to accomodate up to 6 channels. 
     <br />
     <br />
-    DMA. 
+    Our voltage mode control loop ended up being pretty robust and stable without too much messing around. It's a PID controller, except without a derivative term, so it's really a PI controller. The PI subroutine and adjustment of the duty cycle occurs on the "Repetition" callback, which basically means our interrupt service routine is called every "N" many cycles of the HRTIM master timer. In our case, we chose N=24 after some trial and error.
     <br />
     <br />
-    Repetition counter
+    The sampling of voltage and current is done sychronously with the HRTIM waveform. Samples are triggered with spare compare events and are transferred to RAM using the DMA controller. That took some messing around to get working. But once you know which settings to set to what, it all works out. The timing of these ADC sample triggers is important, as we want it to occur when there is not switching activity of the power stage, because that would introduce some noise and such. 
 </p>
 
+<h3>I2C Interface</h3>
+<p>
+    The device can be controlled, and performance information read back, over I2C. The I2C is handled with a channel on the DMA controller. I also wrote a little web application intended for a raspberry pi that gives us a nice user interface to control the MMPSU. Below you can see a picture of the web app, not doing anything, and not displaying all that well in Firefox.
+</p>
+<img style="width:50%;margin:10px auto;" src="{{site.url}}/img/mmpsu/web_app.png" />
+
 <h2>Testing and Results</h2>
-<p>At the time of writing this, we've tested it up to nearly 1000W output (12V @ ~80A). What needs to change is the gate resistors to improve rise time. We don't have a scope fast enough to properly measure what's actually going on a the gate, but in our spice simulation, the rise time seems to be about twice what we estimated it would be, much of that due to the miller plateau which we failed to account for in our first-order calculations. </p>
+<p>At the time of writing this, we've tested it up to nearly 1000W output (12V @ ~80A). The heat produced was not at all concerning and it bodes well for cranking the power up. For a load, we are using six 12V 150W(ish) PTC heaters we bought from amazon. Thus, our main limitation at the moment is how many heaters we have. Fortunately they are relatively cheap and we can buy more. Below you can see our test setup.
+</p>
+<img style="width:50%;margin:10px auto;" src="{{site.url}}/img/mmpsu/spaghetti.jpg" />

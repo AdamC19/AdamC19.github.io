@@ -7,11 +7,25 @@ imgurl: /img/auto_mains_switch_square.png
 <h2 class="center-all">Overview</h2>
 <p>I initially got this idea from a project by woodworker John Heisz who built an <a href="https://ibuildit.ca/projects/simple-load-sensing-automatic-switch/">automatic mains switch</a>. That design is a bit better than his <a href="https://ibuildit.ca/projects/automatic-load-sensing-switch/">earlier design</a>. His circuit is nice and simple, but a few things I don't like about it are that it requires around a 10A load to trigger the secondary circuit, it requires a special large-ish transformer, and it can only successfully trigger a solid state "relay". This is all fine I guess, but I wanted to try my hand at a similar switch that would trigger at lower load current and energize an electro-mechanical relay, meaning it could be adapted to switch a DC load or signal another device if desired. </p>
 
+
+
+<h2 class="center-all"> December 2021 Update </h2>
+<p>Sometime in 2021, I was sitting around bored and came up with an idea I liked better, that is in some ways more straightforward. As long as we have to use an op-amp, let's just sense the current with a shunt resistor instead of fooling around with transformers and whatever. I thought it would be nice to make it all solid-state this time, which makes it smaller and lower power potentially. </p>
+<div style="display:table;width:70%;margin:0px auto">
+  <img src="/img/auto_mains_switch/auto_mains_switch_schematic.png" style="display:block;width:100%" alt="First concept for my automatic mains switch">
+  <p style="display:inline-block;width:100%;font-size:0.75em">
+  New schematic for my automatic mains switch circuit.</p>
+</div>
+<p>Based on simulation, this circuit will trigger the secondary with only a few hundred milliamps flowing through the main load. I think the niftiest (most unique?) part of this circuit is the power supply. I came up with it for another offline powered projet where I needed a power supply that basically was boosted above the live rail. It's one I've not come across anywhere else.</p>
+<p>The schematic speaks for itself, but bascially you have a typical capacitive dropper driving a charge pump. I find it easier to think about by setting Live as the "0V reference", and imagining Neutral swinging up and down. So when Neutral swings negative WRT Live, It charges C1 to ~48V max. Then when Neutral swings positive WRT live, C1 is boosted above Live, and the charge in C1 is transferred to C3. When C1 is discharged, and D2 and D3 conduct, excess current through C2 is dealt with by D5.</p>
+<p>If you don't believe it would actually work, let me tell you that I've built it, and it totally does work. It feels a bit crude and naughty, but it gets the job done.</p>
+
+<h2 class="center-all"> Original Idea </h2>
 <p>I wanted to use a simple current-sense transformer and detect a load using a peak-detector circuit. I found a small toroidal inductor core, around which I wrapped several turns of 14 AWG solid-core copper wire as the primary and a dozen or so turns of 22 AWG solid-core wire as the secondary. I then put together the following circuit:</p>
 <div style="display:table;width:60%;margin:0px auto">
-  <img src="/img/auto_mains_switch_schematic.png" style="display:block;width:100%" alt="Schematic of my automatic mains switch">
+  <img src="/img/auto_mains_switch/auto_mains_switch_schematic_OLD.png" style="display:block;width:100%" alt="First concept for my automatic mains switch">
   <p style="display:inline-block;width:100%;font-size:0.75em">
-  Schematic of my automatic mains switch circuit.</p>
+    First concept for my automatic mains switch circuit.</p>
 </div>
 
 <p>The power supply is as simple as it gets using a capacitive dropper, a bridge rectifier, and a 12V zener diode. The capacitive dropper, C2 and C3, should use class Y film capacitors for safety, and R2 additionally should be a fusible resistor. A MOV wouldn't be a bad idea either. The user will never be touching or interacting with any part of this circuit, which is why I think this approach is OK. </p>

@@ -1,0 +1,110 @@
+---
+layout: posts
+title: Musical SSTC Driver 2022
+subhead: My continued work with solid-state Tesla Coil drivers.
+imgurl: /img/sstc_2022_square.png
+permalink: /sstc_2022/
+---
+
+<!-- 
+<ul class="quicklinks" style="flex-shrink: 0">
+    <li><a href="{{page.url}}#source-files">Hardware Source Files</a></li>
+    <li><a href="{{page.url}}#what">What I'm Building And Why</a></li>
+    <ul>
+        <li><a href="{{page.url}}#more-sensible-pwm" >More Sensible PWM</a></li>
+    </ul>
+    <li><a href="{{page.url}}#power-supply">The Power Supply</a></li>
+    <li><a href="{{page.url}}#controller">The Controller</a></li>
+    <ul>
+      <li><a href="{{page.url}}#ctrl-feedback">Secondary Coil Feedback</a></li>
+      <li><a href="{{page.url}}#ctrl-pll">Phase Locked Loop</a></li>
+      <li><a href="{{page.url}}#ctrl-one-shot">Edge Triggered One-Shot</a></li>
+      <li><a href="{{page.url}}#ctrl-ramp">Ramp Generator</a></li>
+      <li><a href="{{page.url}}#ctrl-audio">Audio Input</a></li>
+      <li><a href="{{page.url}}#ctrl-pwm">PWM Modulator and CAN Transceiver</a></li>
+    </ul>
+    <li><a href="{{page.url}}#full-bridge">The Full-Bridge Driver</a></li>
+</ul> -->
+
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/sstc_2022/sstc_high_level_diagram.png"><img src="{{site.url}}/img/sstc_2022/sstc_high_level_diagram.png"></a>
+    <p>High-level diagram of my tesla-coil driver.</p>
+</div>
+
+<h2 id="source-files"><a href="https://github.com/AdamC19/Musical_SSTC_Driver">Hardware Source Files</a></h2>
+
+<h2 id="what">What I'm Building And Why</h2>
+<p>
+    My old musical Tesla coil system has pretty much died. First, my old secondary coil began arcing internally which caused it to die a very smelly, smokey death. Fortunately I had my larger, newer coil. So I wacked that into the system. But then the half-bridge driver itself died. It seems the low-side SiCFET in the half-bridge bit the dust for some reason. I wasn't too broken up, because the old driver circuit was mostly hand-built on perfboard, and all-around, kinda scuffed. So these events spurred me into action on designing a new-and-improved driver circuit.
+</p>
+
+<p>
+    This new design is mostly based on the reasonable success of my first design, but is improved (or at least changed) in several ways. 
+</p>
+
+<ul>
+    <li>Powered by a power-factor corrected boost supply, so the DC supply to the inverter is higher to begin with.</li>
+    <li>Inverter stage uses a full-bridge driver instead of half-bridge driver, thus using more of the available voltage.</li>
+    <li>A full-bridge configuration also means the PWM modulation makes more sense than the way I did it before.</li>
+    <li>Control is streamlined in some ways, but more complex in other ways.</li>
+    <li>Control circuit uses a discrete PLL rather than the crappy CD4046. The only reason for this is that I hate the CD4046!</li>
+</ul>
+
+<h3 id="more-sensible-pwm">More Sensible PWM</h3>
+<p>
+    Below you can see a timing diagram of how the baseband frequency (the resonant frequency of the secondary) ends up as voltage across the primary. It ends up making a lot more sense than the way I was doing it with the half-bridge before. With this new way, the average value of the voltage across the primary ends up being close to zero. 
+    <img style="display:block;width:60%;margin:10px auto" src="{{site.url}}/img/sstc_2022/timing_diagram.png" />
+</p>
+
+<h2 id="power-supply">The Power Supply</h2>
+<p>
+    The power supply is an Active Power-Factor Corrected (APFC) boost converter that takes in 120V AC and outputs approximately 500V DC. It is <em>dangerous</em>, and in case it needs to be said, don't build it unless you know the risks and know how to mitigate them.
+</p>
+
+<h2 id="controller">The Controller</h2>
+<p>
+    This board produces the audio modulated PWM that is fed to the full-bridge driver over CAN bus. Below is a block diagram of the circuit.
+    <img style="display:block;width:70%;margin:10px auto" src="{{site.url}}/img/sstc_2022/control_board_block_diagram.png" />
+</p>
+<h3 id="ctrl-feedback">Secondary Coil Feedback</h3>
+<p>
+    <img style="display:block;width:60%;margin:10px auto" src="{{site.url}}/img/sstc_2022/secondary_coil_feedback.png" />
+</p>
+
+<h3 id="ctrl-pll">Phase Locked Loop</h3>
+<p>
+    <img style="display:block;width:75%;margin:10px auto" src="{{site.url}}/img/sstc_2022/discrete_pll.png" />
+</p>
+
+<h3 id="ctrl-one-shot">Edge Triggered One-Shot</h3>
+<p>
+    Worth noting that an effect of this block is that the frequency is doubled - the resulting PWM will end up being twice the baseband frequency coming out of the PLL. The first XOR gate really does nothing - just buffering up the signal coming from the PLL. 
+    <img style="display:block;width:50%;margin:10px auto" src="{{site.url}}/img/sstc_2022/one_shot.png" />
+</p>
+
+<h3 id="ctrl-ramp">Ramp Generator</h3>
+<p>
+    This little circuit is kinda nifty I think. It basically guarantees that the amplitude of the ramp function will be pretty much constant, regardless of frequency. First, a current mirror creates a ramp on a capacitor, reset periodically by the reset pulse. The ramp function is averaged with a low-pass filter. This average then feeds into a simple integrating control stage which adjusts the current through the current mirror, thus adjusting the slope of the ramp.
+    <img style="display:block;width:70%;margin:10px auto" src="{{site.url}}/img/sstc_2022/ramp_gen.png" />
+    The reason for the diode reset method is simply that it's faster than using a transistor, which would need time to turn off (coming out of saturation), which takes more time than I wanted it to take.
+</p>
+
+<h3 id="ctrl-audio">Audio Input</h3>
+<p>
+    This is just some simple audio input protection, filtering, and gain control.
+    <img style="display:block;width:70%;margin:10px auto" src="{{site.url}}/img/sstc_2022/audio.png" />
+</p>
+
+
+<h3 id="ctrl-pwm">PWM Modulator and CAN Transceiver</h3>
+<p>
+    Finally, the audio signal modulates the ramp function and creates the PWM, which is put into a CAN transceiver. 
+    <img style="display:block;width:60%;margin:10px auto" src="{{site.url}}/img/sstc_2022/pwm.png" />
+</p>
+
+<h2 id="full-bridge">The Full-Bridge Driver</h2>
+<p>
+    The PWM is transferred from the control board to this board using CAN bus transceivers, due to CAN bus having a pretty robust physical layer. Below is a simplified schematic of what is going on. The main things to note there are the PWM driving a DFF configured as a toggle flip-flop, thus returning the PWM frequency in half, and returning it to the resonant frequency of the secondary. 
+    <img style="display:block;width:70%;margin:10px auto" src="{{site.url}}/img/sstc_2022/full_bridge_simplified_schematic.png" />
+    Due to the high switching speed and high DC voltage, I chose silicon carbide MOSFETs for the bridge. 
+</p>

@@ -5,12 +5,7 @@ subhead: My continued work with solid-state Tesla Coil drivers.
 imgurl: /img/sstc_2022_square.png
 permalink: /sstc_2022/
 ---
-<script type="text/javascript">
-    {% include table_of_contents.js %}
-</script>
-<div id="toc">
-    Table of Contents
-</div>
+
 <!-- 
 <ul class="quicklinks" style="flex-shrink: 0">
     <li><a href="{{page.url}}#source-files">Hardware Source Files</a></li>
@@ -63,8 +58,12 @@ permalink: /sstc_2022/
 
 <h2 id="power-supply">The Power Supply</h2>
 <p>
-    The power supply is an Active Power-Factor Corrected (APFC) boost converter that takes in 120V AC and outputs approximately 500V DC. It is <em>dangerous</em>, and in case it needs to be said, don't build it unless you know the risks and know how to mitigate them.
+    The power supply is a pretty bog-standard Active Power-Factor Corrected (APFC) boost converter that takes in 120V AC and outputs approximately 500V DC. It is <em>dangerous</em>, and in case it needs to be said, don't build it unless you know the risks and know how to mitigate them.
 </p>
+<p>
+    <img style="display:block;width:50%;margin:10px auto" src="{{site.url}}/img/sstc_2022/APFC_board_assembled.jpg" />
+</p>
+
 
 <h2 id="controller">The Controller</h2>
 <p>
@@ -96,7 +95,7 @@ permalink: /sstc_2022/
 
 <h3 id="ctrl-audio">Audio Input</h3>
 <p>
-    This is just some simple audio input protection, filtering, and gain control.
+    The audio input is expecting a differential audio signal. So I have a seperate circuit that combines the stereo audio into a single differential channel. 
     <img style="display:block;width:70%;margin:10px auto" src="{{site.url}}/img/sstc_2022/audio.png" />
 </p>
 

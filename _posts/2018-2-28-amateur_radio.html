@@ -7,7 +7,128 @@ permalink: /ke8itf/
 ---
 <p> I&apos;m a general-licensed amateur radio operator (callsign: KE8ITF). I have more info on my <a href="http://www.qrz.com/db/KE8ITF" target="_blank">QRZ profile</a>.</p>
 
-<h3>High-Altitude Balloon Project</h3>
-<ul>
-    <li><a href="https://github.com/AdamC19/High_Alt_Balloon_Payload">Github Repo</a></li>
-</ul>
+<div id="toc">
+    <h3>Table of Contents</h3>
+</div>
+
+<h2 id="balloon-project">High-Altitude Balloon Project 2023</h2>
+
+
+<h3 id="overview">Purpose and Overview</h3>
+
+<p><a href="https://github.com/AdamC19/High_Alt_Balloon_Payload">Payload Source Files Github Repo</a></p>
+
+<p>I'm building a payload for a high-altitude balloon. The payload will transmit location, barometric pressure, and temperature data on the amateur radio 2m band and act as a <a href="https://en.wikipedia.org/wiki/Automatic_Packet_Reporting_System">APRS</a> beacon. I decided to do this the hard way and build the whole radio and everything &quot;from scratch.&quot; That is mainly what this blog post is about, the purpose being a sort of notebook documenting my design process, and to serve as help for others attempting to do something similar.</p>
+<p>Primary Goals:
+    <ul>
+        <li>Make measurements and collect data.
+            <ul>
+                <li>GPS location</li>
+                <li>Barometric pressure (also second rough determination of altitude)</li>
+                <li>Temperature (inside and outside payload compartment)</li>
+            </ul>
+        </li>
+        <li>Telemeter data on the Amateur Radio 2m band (144.39MHz)</li>
+        <li>Log the data to on-board, non-volatile storage (micro-SD card).</li>
+        <li>Powered from NiMH batteries.</li>
+        <li>Take some pictures and whatever.</li>
+    </ul>
+</p>
+
+<h3 id="hw-design">Payload Hardware Design</h3>
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/weather_balloon_block_diag-Overview.png"><img src="{{site.url}}/img/ke8itf/weather_balloon_block_diag-Overview.png"></a>
+    <p>Payload logical overview block diagram</p>
+</div>
+<p>For the main processor, I chose the STM32F334C8T6, primarily because it has the HRTIM peripheral, which is a high resolution counter clocked from a delay-locked loop at over 4GHz. This enables sufficiently fine control of the PWM frequency while running at a few MHz. The reason this matters is because I wanted to generate the baseband signal directly from the microcontroller, and feed it straight into the analog part of the radio transmitter. More on this later.
+</p>
+
+<p>The sensors were whatever I found through a little google and digikey parametric searching. The GPS Receiver is the <a href="https://www.u-blox.com/en/product/max-m8-series">u-blox MAX-M8C-0</a> - a fairly popular module that looked easy enough to work with. I chose an <a href="https://www.digikey.com/en/products/detail/taoglas-limited/GP-1575-25-4-A-02/2332642">on-board GPS antenna</a>, and called it a day there. Didn't really need to be anything fancy, just enough to work.
+</p>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/schem_GPS.png"><img src="{{site.url}}/img/ke8itf/schem_GPS.png"></a>
+    <p>GPS receiver schematic screen-clip.</p>
+</div>
+
+<p>The two temperature sensors are the <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/25095A.pdf">MCP9808</a>, which are IC's which feature +/-0.5<super>o</super>C accuracy, and are easy to work with. The off-board one will actually be a little breakout board from Adafruit that I'll affix to the outside of the payload somehow.</p>
+
+<p>The barometric pressure sensor is equally uninteresting, just whatever I found on digikey that would read a low enough pressure.</p>
+
+<h4 id="radio-tx">Radio Transmitter</h4>
+<p>The radio transmitter is a little more interesting. It's sort of a single-up-conversion, superheterodyne architecture. Except the modulation to create the IF is done in the microcontroller, all digitally. </p>
+<div style="width: 80%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/weather_balloon_block_diag-Radio.png"><img src="{{site.url}}/img/ke8itf/weather_balloon_block_diag-Radio.png"></a>
+    <p>Payload radio transmitter block diagram</p>
+</div>
+
+<p>
+    I want to build a basic <a href="https://en.wikipedia.org/wiki/Dipole_antenna#Half-wave_dipole">half-wave dipole</a> as the transmit antenna. They're simple to build and simple to understand, and can work quite well with little effort. One of the chief issues with this is the feedpoint impedance at resonance is ~73&Omega; (call it 75&Omega;). Our system impedance - per tradition - is 50&Omega;. This mismatch means we don't have maximum power transfer. Many radio amateurs simply live with this situation - I guess because they have plenty of transmit power and a good 'nuff receiver - so the mismatch doesn't matter enough in most cases. (The VSWR in a 50&Omega; system feeding a 75&Omega; load is ~1.5. The casual HAM is likely happy with any VSWR less-than ~2.) 
+</p>
+<p>$$ \Gamma = \frac{Z_L - Z_0}{Z_L + Z_0} $$</p>
+<p>$$ VSWR = \frac{1+|\Gamma|}{1-|\Gamma|} $$</p>
+
+<h4 id="link-budget">Link Budget</h4>
+<p>In my design however, I don't have a ton of transmit power to work with. I designed for ~28dBm on a good day. Let's round this out to about 0.5W or ~27dBm. Let's also consider a few dB of loss/mismatch, then consider some weak gain from the dipole. For this SWAG, let's say it washes out and our EIRP is ~27dBm. Is this going to be enough? Let's do the math!</p>
+<p>The radio I have on hand specs 0.18&mu;V @ 12dB SINAD, which is basically saying that a signal of 0.18&mu;V amplitude at the receiver can <a href="https://en.wikipedia.org/wiki/SINAD#Commercial_radio_specifications">produce intelligible speech</a>. In reality, let's say the minimum receivable signal is actually like 0.25&mu;V (some margin would be nice). What dBm does this correspond to?</p>
+<p>$$ P = \frac{0.25\mu V^2}{50\Omega} = 1.25\cdot 10^{-12} mW $$</p>
+<p>$$ P = 10\cdot \log{(1.25\cdot 10^{-12})} = -119 dBm $$</p>
+
+<p>This result, somewhere around about -120dBm, seems about right based on my experimentation with my Baofeng. I'm gonna kinda do this backward and figure out, based on these numbers, the max distance appart the transmitter and receiver could be and still work. As before, for this SWAG, I'm going to assume that the weak antenna gain washes out with the losses in the matching network(s) and such. That makes this really simple! Our calculation looks like the <a href="https://en.wikipedia.org/wiki/Free-space_path_loss">free-space-path-loss</a> between two ~isotropic antenna situations. Thus:</p>
+<p>$$ \lambda = \frac{c}{f} = \frac{2.998\cdot 10^8}{144\cdot 10^6} = 2.08m $$</p>
+<p>$$ FSPL_{MAX} = 27dBm - (-119dBm) = 146dB $$</p>
+<p>$$ FSPL_{MAX} = 10\cdot \log_{10}\Big(\Big( \frac{4\pi d}{\lambda}\Big)^2\Big) $$</p>
+<p>$$ d = \frac{\lambda}{4\pi} \cdot 10^{FSPL_{MAX}/20} = 3.3\cdot 10^6 m$$</p>
+<p>I'll admit, 3 300 km distance sounds pretty ludicrous. But the math for this does check out. I don't think I'll see anywhere close to this kind of performance, but the fact that in an <em>ideal</em> world, it could work like this, bodes well for my much humbler goals (maybe ~33km or so). If we think about that, that's 2 orders of magnitude in base 10 less distance, which means I'll have about 20dB of margin in the link budget. Which is a good place to be I feel. </p>
+
+<h4 id="antenna">Antenna Matching Network</h4>
+<p>With all that &quot;will it work on paper&quot; stuff out of the way, we can get into some actual design. As discussed above, we need to match a 50&Omega; system to a ~75&Omega; load. I prefer to do the matching on-board. Thus, with a simple PI matching network, I end up with a single ended 75&Omega; output. Which is not matched to most 50&Omega; cable :(. This is fairly easy to solve since it's only operating at one frequency. So if we know our cable, then we know the wavelength of our signal in said cable, and as long as I make the 50&Omega; feedline a multiple of &lambda;/2, then the 75&Omega; feedpoint impedance will be translated unperturbed to the output of the matching network. Or so goes the theory.</p>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/tx_feedline_crude_schem.png"><img src="{{site.url}}/img/ke8itf/tx_feedline_crude_schem.png"></a>
+    <p>Crude schematic of the plan for the feedline and antenna impedance matching.</p>
+</div>
+<p>There's one other little detail that many radio amateurs also tend to neglect. That is the dipole, to radiate efficiently, needs a balanced impedance feeding it. It kinda makes intuitive sense I hope, so we'll just leave it there. (Note: you can get away with not doing this, but the feedline itself becomes part of the radiating element, which can produce unexpected effects.) So we need to turn a single-ended impedance into a differential impedance. This can be done with a balun formed by coiling up a few turns of the feedline into a "common-mode choke", which is a type of transformer (a 1:1 current balun). So with the same N*&lambda;/2 length feedline, I'll create a few turns with the last 20cm or so, and form a neat, weatherproof balun. No funny-business necessary.</p>
+
+<h4 id="power">Power Distribution</h4>
+<p>I plan to power this off a 2s NiMH battery. To do anything with this, the ~2.4V needs to be boosted up. I boost it first to 8V, since 8V is needed for the final power amplifier (PA). Then I buck convert it down to ~3.0V and 5V. Pretty simple.</p>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/weather_balloon_block_diag-Power.png"><img src="{{site.url}}/img/ke8itf/weather_balloon_block_diag-Power.png"></a>
+    <p>Payload power architecture block diagram</p>
+</div>
+
+<h3 id="fw-design">Payload Firmware & Software</h3>
+<p>As mentioned in the hardware section, the payload is run by an STM32F334C8T6 microcontroller. It is capable of generating the several-MHz IF signal needed to upconvert to the carrier frequency of 144.39MHz. </p>
+<h4>APRS</h4>
+<a href="http://www.aprs.org/doc/APRS101.PDF">The APRS Spec</a>. 
+
+<h3 id="first-article-bringup">First Article Bringup</h3>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/first_article.png"><img src="{{site.url}}/img/ke8itf/first_article.png"></a>
+    <p>Photograph of the first article PCBA, missing only the mixer components.</p>
+</div>
+<p>Lots of things worked great right away. With V-BATT = 2.4V, all power rails came up. Doing nothing, it drew around 60mA. Once the digital core and GPS receiver were doing their respective activities, the current draw was nearly 200mA. Enabling the LO circuitry (the PLL and some RF amps), current draw was around 0.5A. All-in-all, a little more power hungry than I was hoping. But it's what ya get I suppose. LO generation looked pretty good. I could talk to all the devices on the board. Initially however, the GPS receiver couldn't get a strong enough signal, at least on the bench in my apartment in downtown Seattle. It could usually see at least one satellite, and sometimes could see enough to theoretically get a fix, but the signal was reported as being too weak to be usable. At the time of writing this, I haven't brought it outdoors to try it. That's the next step.</p>
+
+<h4 id="sd-card-driver">SD Card Driver</h4>
+<p>The STM32CubeMX software provides the FatFS middleware to do filesystem-level things. The work left to the user is to write the low-level driver that talks to whatever storage media they choose. This is the SD card in my case, talked to over SPI. The SD card driver creation was made pretty easy by <a href="https://01001000.xyz/2020-08-09-Tutorial-STM32CubeIDE-SD-card/">this article</a> and the associated <a href="https://github.com/kiwih/cubeide-sd-card/tree/master">github repo</a>, owned by github user <a href="https://github.com/kiwih">kiwih</a>, from which I copied the parts that do the SPI things with the SD card, including the necessary SD card commands and whatnot. Many thanks to kiwih!</p>
+
+<h4 id="rf-section">RF Section</h4>
+<h5 id="lo-generation">LO Generation</h5>
+<p>The LO looked servicable, and was only ~14ppm off-nominal. Considering the crystal that's generating the 12MHz reference (<a href="https://datasheet.lcsc.com/lcsc/2001061508_JGHC-G3212000182080_C479168.pdf">G3212000182080</a>) is &plusmn;20ppm @ 25<sup>o</sup>C (and additional ppm's over full temperature range!), this is a within-spec result. (That crystal is apparently discontinued at LCSC, but I somehow got it turnkey assembled from JLCPCB.) In truth, it would be worth swapping in a better crystal - a real pro-gamer move would be to use a proper TCXO. But I didn't think about all this until too late. I suspect that &plusmn;20ppm is probably good 'nuff for this purpose (channel widths are over ~10kHz = ~70ppm, and also does every cheapo radio have a TCXO in it???), but we will see.....</p>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/LO_spectrum.png"><img src="{{site.url}}/img/ke8itf/LO_spectrum.png"></a>
+    <p>Spectrum of the LO output, fed through a 10dB attenuator into the Siglent SSA3021X.</p>
+</div>
+<p>The LO was a little weaker than I was planning on. I was hoping for at least 6 or 7 dBm of drive strength for the mixer. Instead, we're seeing about 3dBm. Fortunately, I have a ~3dB pad in the signal path that I can remove and jumper out. What all this means is either (1) I'm not getting the full gain I was hoping to get from the PGA-105 gain blocks, or (2) the CX2045 balun is lossier than expected. Working backwards from our result of 3dB at the LO GEN OUT port, it's easy to see that we are getting -18dBm out of the VCO (assuming the amps are operating with nominal gain). The VCO (<a href="https://www.analog.com/media/en/technical-documentation/data-sheets/MAX2605-MAX2609.pdf">MAX2606</a>) allegedly can put out -10dBm, though a reactive power match may be required to realize that. This configuration works, but a future optimization may involve simply replacing the 1k pull-ups (R44 and R45) with small inductors.</p>
+<div style="width: 75%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/LO_schem_annotated.png"><img src="{{site.url}}/img/ke8itf/LO_schem_annotated.png"></a>
+    <p>Schematic of the LO generator circuit, with annotations for power levels at various points.</p>
+</div>
+<h5 id="mixer">Mixer Performance</h5>
+<p>The upconverter as a whole was disappointingly lossy. After the mixer and filter, the resulting power was about -35dBm. Quite a bit less than I was hoping for.
+</p>
+<div style="width: 70%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/ke8itf/mixer_performance.png"><img src="{{site.url}}/img/ke8itf/mixer_performance.png"></a>
+    <p>Spectrum analyzer screenshot showing the output of the J7 connector, after mixer and filter.</p>
+</div>
+<p>I soldered in some wires and made a crude measurement directly at the output of the mixer (before the filter), and found it to be at about -15dBm. This was closer to what I was expecting there and shows that the filter is losing about 20dB in it's passband! Not great, but ya can't win em all I guess. What this means is I'll need an additional PA to get this to some transmittable level. Which I kinda was thinking I might do anyway, but this makes it more of a necessity. </p>
+<p>What I will take as a win was the good LO rejection. The LO falls a little bit in the passband of the filter, so what we're seeing there is all LO rejection. Not too bad! This tells me that I could actually bring the baseband FSK signal and LO closer in frequency and get better definitions of mark and space frequencies. Good!</p>
+<h3>Antennas and Things</h3>

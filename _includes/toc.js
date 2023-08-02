@@ -17,7 +17,7 @@ function toc(){
         if(elem.matches('h2')){
             var new_p = document.createElement("p");
             var new_link = document.createElement("a");
-            new_link.href = "ke8itf/#" + elem.id;
+            new_link.href = "{{page.url}}#" + elem.id;
             new_p.appendChild(new_link);
             new_link.innerHTML = elem.innerHTML;
             new_link.style.color = "black";
@@ -28,7 +28,7 @@ function toc(){
         else if(elem.matches('h3')){
             var new_p = document.createElement("p");
             var new_link = document.createElement("a");
-            new_link.href = "ke8itf/#" + elem.id;
+            new_link.href = "{{page.url}}#" + elem.id;
             new_p.appendChild(new_link);
             new_link.innerHTML = "&nbsp;&nbsp;" + elem.innerHTML;
             new_link.style.color = "black";
@@ -39,7 +39,7 @@ function toc(){
         else if(elem.matches('h4')){
             var new_p = document.createElement("p");
             var new_link = document.createElement("a");
-            new_link.href = "ke8itf/#" + elem.id;
+            new_link.href = "{{page.url}}#" + elem.id;
             new_p.appendChild(new_link);
             new_link.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + elem.innerHTML;
             new_link.style.color = "black";
@@ -50,7 +50,7 @@ function toc(){
         else if(elem.matches('h5')){
             var new_p = document.createElement("p");
             var new_link = document.createElement("a");
-            new_link.href = "ke8itf/#" + elem.id;
+            new_link.href = "{{page.url}}#" + elem.id;
             new_p.appendChild(new_link);
             new_link.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + elem.innerHTML;
             new_link.style.color = "black";

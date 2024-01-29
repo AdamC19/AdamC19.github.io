@@ -97,7 +97,15 @@ permalink: /ke8itf/
 
 <h3 id="fw-design">Payload Firmware & Software</h3>
 <p>As mentioned in the hardware section, the payload is run by an STM32F334C8T6 microcontroller. It is capable of generating the several-MHz IF signal needed to upconvert to the carrier frequency of 144.39MHz. </p>
-<h4>APRS</h4>
+<h4 id="data-stuff">APRS &lt;== AX.25 &lt;== HDLC &lt;== NRZI &lt;== AFSK</h4>
+<p>I'm mostly going to take a bottom-up approach to this problem. I'll start with how to form 1's and 0's using AFSK, then work on forming bytes and packets. At some point I'll branch off and write some higher level framing stuff, then work on APRS level stuff. I'll document my process here.</p>
+
+<p>The structure of the system is roughly thus: APRS uses AX.25, which uses <a href="https://en.wikipedia.org/wiki/High-Level_Data_Link_Control">High-Level Data Link Control (HDLC)</a> for framing. Bits are encoded using NRZI</a> encoding. Then the two states (1 and 0) are formed using Audio Frequency Shift Keying (AFSK).</p>
+
+<h5 id="ones-and-zeros">Forming 1's and 0's (NRZI)</h5>
+<p>According to the Wikipedia, AX.25 transmits its HDLC framed data using NRZI encoding. Wikipedia, as usual, also has a good intro to <a href="https://en.wikipedia.org/wiki/Non-return-to-zero#NRZI">Non-Return-to-Zero Inverted (NRZI)</a>. AFSK defines two baseband frequencies that you shift between to form symbols. NRZI means that each symbol is encoded by a <em>transition</em> - a <em>shift</em> - in your baseband audio signal. So a mark tone or a space tone don't map to 1 or 0 per-se (that would be NRZ, typical for RS-232 style UARTs). It's the <em>transition</em> between these two states that defines the value of a bit. It's still an exercise to the designer of a system to decide whether a transition is a 1 or a 0. The other little detail that arises is the need for bit-stuffing, but I'll address this next.</p>
+
+<h5 id="aprs">APRS</h5>
 <a href="http://www.aprs.org/doc/APRS101.PDF">The APRS Spec</a>. 
 
 <h3 id="first-article-bringup">First Article Bringup</h3>

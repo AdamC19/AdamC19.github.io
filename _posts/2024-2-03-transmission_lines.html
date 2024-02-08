@@ -1,0 +1,80 @@
+---
+layout: posts
+title: Transmission Lines in Digital Systems
+subhead: More exciting than it sounds!
+imgurl: /img/tlines_square.png
+permalink: /transmission-lines/
+---
+
+<div id="toc">
+    <h3>Table of Contents</h3>
+</div>
+
+<h2 id="the-theory">The Theory (And Proving it Works)</h2>
+
+<p>All of us with a typical electrical engineering degree learned basic transmission line theory in school. Stuff about signal reflections, propagation delay, electrical length, etc. A big take-away we learned is that the optimal case for transmission is when Z<sub>SOURCE</sub> = Z<sub>0</sub> = Z<sub>LOAD</sub>. Ok, sounds fine.</p>
+
+<p>What about digital systems though? In common digital systems your transmitting side will be some push-pull CMOS output or similar, so its source impedance is nearly zero - way less than 50 ohms. And your receiving side is some high impedance CMOS input - a load impedance way greater than 50 ohms. But for signal integrity, we're told that the transmission line between them (the trace on your PCB) should be routed as 50 ohms. </p>
+
+<p>But where does this "rule-of-thumb" come from? Why should it help when neither the source nor the load impedances are close to 50 ohms? Well let's dispell the myth. I'm here to tell you that in a digital system, <em>just</em> routing your traces as 50 ohms won't save your signal integrity <em>on its own</em>. The advanced-rule-of-thumb solution, of course, is to add a termination - usually 50 ohms.</p>
+
+<h3 id="terminations">Terminations - Why Should They Work?</h3>
+<p>But hang on a minute - didn't we agree above that the source impedance needs to match the load in order for this to work? Otherwise you'll have reflections - and hence - bad signal integrity ... right? Well, not quite. High speed digital design is an exercise in freeing your mind. Reflections aren't necessarily the enemy, as you'll see shortly. I'll talk more theory as we go, but let's get into the fun stuff now.</p>
+
+<h3 id="test-setup">Test Setup</h3>
+<p>It turns out that my Siglent SDG2042X function generator has a 50 ohm termination in its output path at all times, which messes up what I'm trying to show. Its rise time also maxes out at ~8ns. So first I constructed a 74-series logic buffer by connecting six SN74HC14 inverters in parallel. I wanted to ensure I had enough drive strength so the rise and fall times would be as sharp as possible. My scope measured the rise time at just under 3ns with a 3.3V supply. Good enough.</p> 
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/test_board.jpg"><img src="{{site.url}}/img/transmission_lines/test_board.jpg"></a>
+    <p>A SN74HC14N soldered to a perfboard. Signal in on the right, signal out on the left (sorry it's backwards).</p>
+</div>
+
+<h3 id="baselines">Baselines</h3>
+<p>With nothing connected, just scoping the output (Rigol DHO4804, 500MHz x10 passive probe), I got the below result. Lots of over/under shoot, huh? Amazing what just a short length of wire can do to a signal.</p>
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/no_tline.png"><img src="{{site.url}}/img/transmission_lines/no_tline.png"></a>
+    <p>Baseline output</p>
+</div>
+
+<h3 id="unterm">Unterminated Transmission Line</h3>
+<p>I gathered up all the SMA cables and F-F adapters I had on hand and fashioned a long (4.45m) 50 ohm transmission line. I hooked this up to my buffer and scoped the start and end of the line. Take a look:</p>
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/no_term.png"><img src="{{site.url}}/img/transmission_lines/no_term.png"></a>
+    <p>About as bad as it gets. CH1 (yellow) is start of line, CH2 (blue) is end of line.</p>
+</div>
+<p>What you're seeing there are the reflections from the energy bouncing back and forth from start to end. Increasing the period of the square wave, we can see that eventually the reflections die down as the energy is dissipated in the resistance of the line.</p>
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/ringing_eventually_dies_down.png"><img src="{{site.url}}/img/transmission_lines/ringing_eventually_dies_down.png"></a>
+    <p>Reflections dying down with longer square wave period.</p>
+</div>
+
+<p>Let's take a moment to make sense of what we're seeing. First let's figure out what we should expect for the time this signal will need to propagate down the line. Queue the napkin math:</p>
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/napkin_math_1.png"><img src="{{site.url}}/img/transmission_lines/napkin_math_1.png"></a>
+    <p>Calculating propagation delay.</p>
+</div>
+With that in mind, the reflections waveforms make more sense. The width of the blocky overshoots and undershoots correspond to twice the length of the line. The signal needs to make a round trip:
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/annotated_img_1.png"><img src="{{site.url}}/img/transmission_lines/annotated_img_1.png"></a>
+    <p>Breaking down the reflections.</p>
+</div>
+
+
+<h3 id="end-term">Simple End Termination - Why Does it Work?</h3>
+<p>End termination is easy to buy into and believe it should work (and indeed it does work): </p>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/end_term_schem_and_wfm.png"><img src="{{site.url}}/img/transmission_lines/end_term_schem_and_wfm.png"></a>
+    <p>Schematic of setup and scope waveform.</p>
+</div>
+<p>But let's think deeper for a moment. <em>WHY</em> does it work, when the source impedance is still not matched to the load whatsoever? I think about it in terms of energy transfer. Remember that the transmission line is primarily distributed L's and C's, thus it's primarily reactive (resistance is there too, but small enough for now to forget about). But looking into a very long (read: infinite) transmission line, the line will in fact look <em>resistive</em> to whatever is driving it. Our transmission line is not infinite, but on the timescale of nanoseconds, it might as well be. So when the buffer starts driving the line, it has the task of charging and magnetizing the distributed C and L. The energy is the time-integral of V<super>2</super>/Z<sub>0</sub>. The energy propagates to the end, where we have our 50 ohm termination. Since the line is primarily reactive, whatever energy has been delivered into the line will now be delivered to the load. The rate of energy transfer out (power) will be the same as the rate of energy transfer in, meaning the current delivered to the load will be the same as the current delivered into the line by the driver. Which means the voltage that appears at the load equals the amplitude of our pulse. <em>Whew!</em></p>
+
+<p>This feels like a roundabout way of describing all this, but typical explanations of end terminated digital systems use math to prove the point, whereas I wanted to have an intuitive understanding of what's going on. Hopefully this gives you some additional perspective too. </p>
+
+<h3 id="source-term">Source Termination & More on Characteristic Impedance</h3>
+
+<p>A simple end-termination is often undesireable for some perhaps-obvious reasons. For one thing, with a 3.3V signal for example, the average current through the 50 ohm resistor is ~33mA, not to mention that while the output is high, the current required will be ~66mA during that time! </p>
+
+<p>Another way to terminate this system is a source termination. </p>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/transmission_lines/source_term_schem_and_wfm.png"><img src="{{site.url}}/img/transmission_lines/source_term_schem_and_wfm.png"></a>
+    <p>Schematic of setup and scope waveform.</p>
+</div>

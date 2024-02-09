@@ -1,0 +1,38 @@
+---
+layout: posts
+title: Quieting a Noisy Bench Power Supply
+subhead: Taming-down the noise from a switch-mode bench power supply
+imgurl: /img/psu_noise_square.png
+permalink: /psu_noise/
+---
+
+<div id="toc">
+    <h3>Table of Contents</h3>
+</div>
+
+<h3 id="baseline">Baseline Oscilloscope Noise</h3>
+
+<div style="width: 80%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/psu_noise/scope_baseline_w_probes.png"><img src="{{site.url}}/img/psu_noise/scope_baseline_w_probes.png"></a>
+    <p>Noise shown by the scope with x10 probe shorted to the ground lead and a 20MHz BW filter</p>
+</div>
+
+<h3 id="baseline">Kungber Switching Bench Power Supply</h3>
+
+<p>I bought this cheap switching power supply as a college student for less than $50. It goes up to 60V at 5A. Going up to 60V was the main reason I chose it over others. What any casual user of this supply quickly realizes is that it pollutes any circuit with copious amounts of noise. But where is all this coming from, and is there an effective way to combat it for casual bench use?</p>
+<div style="width: 80%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/psu_noise/noise_ch1.png"><img src="{{site.url}}/img/psu_noise/noise_ch1.png"></a>
+    <p>Measuring power-to-ground with x10 probe on channel 1.</p>
+</div>
+
+<div style="width: 80%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/psu_noise/noise_ch1-ch2.png"><img src="{{site.url}}/img/psu_noise/noise_ch1-ch2.png"></a>
+    <p>Measuring CH1 minus CH2.</p>
+</div>
+
+<p>This goes to show that what we're dealing with is primarily common-mode noise. </p>
+
+<div style="width: 80%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/psu_noise/cm_noise_schem.png"><img src="{{site.url}}/img/psu_noise/cm_noise_schem.png"></a>
+    <p>General diagram of how common-mode noise manifests</p>
+</div>

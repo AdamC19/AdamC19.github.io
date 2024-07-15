@@ -1,0 +1,71 @@
+---
+layout: posts
+title: Thermal EMF in Current Shunt Resistors
+subhead: A rarely-discussed error source in low-level measurements
+imgurl: /img/thermal_emf_square.png
+permalink: /thermal-EMF/
+---
+
+<div id="toc">
+    <h3>Table of Contents</h3>
+</div>
+
+<h2 id="backstory">Backstory</h2>
+
+<p>My buddies and I had designed and built-up a USB PD power supply intended for modular sythesizers. To make it extra fancy, we decked it out with some gubbins for measuring the power draw, using the rather excellent <a href="https://www.ti.com/lit/ds/symlink/ina236.pdf">INA236</a> from Texas Instruments. The core of the supply was just a few switch-mode converters followed by 10mOhm shunts which the INA236's measured across.</p>
+
+<p>We had pretty much everything working, and the measurements under load seemed pretty good, until my buddy noticed some small errors showing up in the current measurement. With no current drawn from the +12V output, the INA236 was still reporting around 10 miiliamps. A similar situation on the +5V output. With the supply being capable of doing 4 or 5 amps at full tilt, 10mA seems like a drop in the bucket. But ... why was it showing up? With a 10mOhm shunt, that would mean there was 100&mu;V being presented to the INA. Suffice it to say, the specs on the INA236 are pretty darn good, so there wasn't a smoking gun. So one Friday night I decided to get to the bottom of it.</p>
+
+<p>You've already read the title, so you know where this is all going. Getting there was not quick or straightforward. As the night wore on I thought I was losing it. The clues weren't making sense.</p>
+
+<h2 id="seebeck">Seebeck Effect</h2>
+<p>Those who have dealt with temperature measurement at all have likely encountered the Seebeck/Peltier/thermoelectric effect. It's the reason thermocouples work, and can be a source of errors in low-level measurements, or so the volt-nuts tell us. </p>
+
+<p>In the case of current sense resistors, you may have encountered a diagram like this:</p>
+<div style="width: 40%;margin:5px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/thermal_emf/seebeck_effect_resistor.png"><img src="{{site.url}}/img/thermal_emf/seebeck_effect_resistor.png"></a>
+    <p><a href="https://www.analog.com/media/en/technical-documentation/data-sheets/ad8551_8552_8554.pdf">AD8552 datasheet</a> page 16.</p>
+</div>
+<p>Ok, if the two leads of the resistors are at different temperatures, the differing metals produce thermocouple voltages that don't cancel out and you have error. But based on my testing above, it seemed like this was in the ~5&mu;V region. Where was 100&mu;V coming from?</p>
+
+<p>This led me to think about differing metal-metal junctions inside the resistor itself. So I scanned the datasheet more carefully, looking for a thermal EMF specification for the resistor itself.</p>
+
+<h2 id="specs">Datasheet Specs of the Shunt</h2>
+
+<p>The shunt we had selected was a 3W rated 2512 case code 10mOhm shunt - <a href="https://www.bourns.com/docs/product-datasheets/cra.pdf">Bourns CRA2512-FZ-R010ELF</a>. There's an interesting note at the top of its datasheet regarding thermal EMF. </p>
+
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/thermal_emf/datasheet_snip.png"><img src="{{site.url}}/img/thermal_emf/datasheet_snip.png"></a>
+    <p>Highlight from the top of the datasheet on this particular resistor.</p>
+</div>
+
+<p>They say <em>less-than</em> 40&mu;V/&deg;C, but how much less? Maybe they don't know or can't guarantee, so I took it to mean &quot;it could be as bad as 40&mu;V/&deg;C and with some significant variation.&quot; But I was on a mission to get an actual number. How bad exactly is it, and can it explain the error completely?</p>
+
+<h2 id="experiments">Experiment to Measure Thermal EMF Tempco</h2>
+
+<p>My plan was to somehow force a known (or at least measureable) thermal gradient across the resistor and measure the resulting voltage with the 34401A. I wanted to use an ice bath to create a known 0&deg;C reference environment and dip one terminal of the resistor into that. Then dip the other terminal into a slightly warmer water bath, the temperature of which I would measure with a random type-K thermocouple and a DMM. (This is just what I had on hand, not super ideal.) And of course I'd have leads coming off the DUT to run to the DMM.</p>
+
+<p>Copper is pretty conductive, thermally and electrically, so I grabbed some solid 12 AWG copper wire, cut two ~6cm legs, then soldered those to each terminal of the DUT. These legs would dip into the water baths and hopefully bring each terminal of the resistor very close to the temperature of the baths. I soldered on sense wires to these copper legs also.</p>
+
+<div style="width: 50%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/thermal_emf/dut.jpg"><img src="{{site.url}}/img/thermal_emf/dut.jpg"></a>
+    <p>Resistor (DUT) with copper legs soldered on.</p>
+</div>
+
+<p>Next was making two small water baths: one with ice, the other with just water that had been in my refrigerator for awhile. I planned to have the baths and DUT in the fridge to control the ambient temperature, keeping it kinda stable and also kinda close to the temps of the baths and DUT to minimize heat flux into the DUT that would create more error.</p>
+
+<p>Before actual measurements could be made, I needed to figure out what offset I was working with due to other metal-metal junctions in the system. So I dunked the whole DUT assembly into the ice bath, waited a few minutes, and took down the measurement. The 34401A reported about 5&mu;V.</p>
+
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/thermal_emf/offset_setup_with_dmm.png"><img src="{{site.url}}/img/thermal_emf/offset_setup_with_dmm.png"></a>
+    <p>Taking an offset measurement by dunking the whole DUT assembly into the ice bath.</p>
+</div>
+
+<p>Finally I dipped each leg of the DUT into each water bath, waited a bit, and read off the measurements. The uncontrolled bath was reading about 8&deg;C, and the voltage across the DUT was reading about 184.4&mu;V. So this works out to a thermal EMF tempco of ~22&mu;V/&deg;C. Pretty believable given what the manufacturer says and based on the error we saw on the prototype.</p>
+<p></p>
+<div style="width: 60%;margin:10px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/thermal_emf/measurement.png"><img src="{{site.url}}/img/thermal_emf/measurement.png"></a>
+    <p>LEFT: DUT dipped into the two ice baths. A type-K thermocouple is probing the right-hand non-icy bath. RIGHT: The brymen is measuring the thermocouple. The 34401A shows 184.4&mu;V measured across the DUT.</p>
+</div>
+
+<h2>Conclusions and How to Mitigate This</h2>

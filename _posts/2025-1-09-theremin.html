@@ -1,0 +1,48 @@
+---
+layout: posts
+title: Repowered Electronics Theremin
+subhead: Wooo-WEEEE-eeee-ooooo!
+imgurl: /img/theremin_square.png
+permalink: /theremin/
+---
+
+<div id="toc">
+    <h3>Table of Contents</h3>
+</div>
+
+<h2 id="design">Initial Design of the Theremin Board</h2>
+
+
+<div style="width: 80%;margin:5px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/theremin/Theremin_Diagrams.png"><img src="{{site.url}}/img/theremin/Theremin_Diagrams.png"></a>
+    <p>Block diagram of my Theremin design.</p>
+</div>
+
+<h3 id="basic-oscillator">Basic Oscillator Building Block</h3>
+<p>The classic theremin uses a heterodyne architecture to generate the pitch of the tone. In simple terms, you make two nearly identical osciallators. The LO will hopefully be pretty constant. The pitch oscillator involves the pitch plate in its feedback loop. The pitch oscillator output will drop in frequency with the player's hand brought closer to the pitch antenna. The LO and the Pitch tone are fed into a frequency mixer, which is a nifty building block that allows you to do addition and subtraction between signals in the frequency domain.</p> 
+
+<h3 id="mixer">Frequency Mixer</h3>
+I didn't even bother looking for off the shelf mixers that would work with such low IF frequencies. Instead, I cooked up the following:
+
+<div style="width: 80%;margin:5px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/theremin/mixer_schem.png"><img src="{{site.url}}/img/theremin/mixer_schem.png"></a>
+    <p>Homebrewed double balanced mixer.</p>
+</div>
+
+<p></p>
+
+<h2 id="modifications">Modifications to the Design</h2>
+<p>After I sent the board out for fab, I realized there's a better way to implement the volume control circuit. That's ok, I'll just bodge it in...</p>
+
+<div style="width: 80%;margin:5px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/theremin/Theremin_Diagram_Different_Volume_Ckt.png"><img src="{{site.url}}/img/theremin/Theremin_Diagram_Different_Volume_Ckt.png"></a>
+    <p>Block diagram of my Theremin with alternate volume control circuit.</p>
+</div>
+
+
+<h3 id="better-volume-ctrl">Better Volume Control</h3>
+
+<div style="width: 95%;margin:5px auto;" class="captioned-img">
+    <a href="{{site.url}}/img/theremin/volume_ctrl_simple_schem.png"><img src="{{site.url}}/img/theremin/volume_ctrl_simple_schem.png"></a>
+    <p>~Simplified conceptual schematic of my volume control circuit.</p>
+</div>
